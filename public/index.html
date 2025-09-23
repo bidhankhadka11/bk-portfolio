@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bidhan Khadka — Portfolio</title>
+    <meta name="description" content="Portfolio of Bidhan Khadka — React, Java, Python, MERN" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- React 18 (UMD) + Babel (compile JSX in browser) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- EmailJS (optional, no backend) -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+      // Optional: enable EmailJS (public key)
+      // emailjs.init("YOUR_PUBLIC_KEY");
+    </script>
+
+    <!-- Data and Components (load in order) -->
+    <script src="js/resume-data.js"></script>
+    <script type="text/babel" src="js/components/Nav.jsx"></script>
+    <script type="text/babel" src="js/components/Section.jsx"></script>
+    <script type="text/babel" src="js/components/Hero.jsx"></script>
+    <script type="text/babel" src="js/components/ProjectCard.jsx"></script>
+    <script type="text/babel" src="js/components/ExperienceCard.jsx"></script>
+    <script type="text/babel" src="js/components/Contact.jsx"></script>
+    <script type="text/babel" src="../src/App.jsx"></script>
+  </body>
+</html>
