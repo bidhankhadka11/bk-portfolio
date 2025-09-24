@@ -3,8 +3,6 @@ export default function Nav() {
     { id: 'home', label: 'Home' },
     { id: 'projects', label: 'Projects' },
     { id: 'experience', label: 'Experience' },
-    { id: 'education', label: 'Education' },
-    { id: 'skills', label: 'Skills' },
     { id: 'contact', label: 'Contact' },
   ]
   const go = (id) => {
@@ -14,12 +12,14 @@ export default function Nav() {
   return (
     <nav className="nav" aria-label="Primary">
       <div className="menu" role="menubar">
-        <span className="brand">BK</span>
-        {items.map((x) => (
-          <button key={x.id} role="menuitem" onClick={() => go(x.id)} aria-label={`Go to ${x.label}`}>
-            {x.label}
-          </button>
-        ))}
+        <span className="brand">BIDHAN KHADKA</span>
+        <div className="links">
+            {items.map((x) => (
+                <button key={x.id} role="menuitem" onClick={() => go(x.id)} aria-label={`Go to ${x.label}`}>
+                    {x.label}
+                </button>
+            ))}
+        </div>
       </div>
     </nav>
   )

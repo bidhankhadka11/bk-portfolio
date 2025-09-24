@@ -7,12 +7,17 @@
   --accent-2: #34d399;
 }
 *{box-sizing:border-box}
+
 html, body, #root{height:100%}
 html{scroll-behavior:smooth;}
 body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji';
-  background: linear-gradient(180deg, #0b0e14 0%, #0f172a 100%);
+  /* background: linear-gradient(180deg, #0b0e14 0%, #0f172a 100%); */
+  background:#0b0e14;
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
   color: var(--text);
 }
 a{color:inherit;text-decoration:none}
@@ -21,32 +26,98 @@ a{color:inherit;text-decoration:none}
 .section h2{margin:0 0 16px;font-size:28px}
 .section p{color:var(--muted);line-height:1.7}
 
-.nav{position:fixed; top:16px; left:16px; z-index:1000;}
-.nav .menu{
-  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-  background:rgba(17,24,39,0.7); backdrop-filter: blur(6px);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:14px; padding:8px 10px;
+/* TOP NAVIGATION */
+.nav{
+  position:fixed; 
+  top:0px; 
+  left:0px; 
+  z-index:1000;
+  width: 100%;
 }
+.nav .menu{
+  display:flex; 
+  justify-content: space-between;
+  gap:12px; 
+  align-items:center; 
+
+  /* flex-wrap:wrap; */
+  background:rgba(17,24,39,0.7); 
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.08);
+   
+  padding:12px 50px;
+  width: 100%;
+}
+
+.nav .links{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;             /* ensures buttons are on the RIGHT */
+}
+
 .nav button, .nav a{
-  background:transparent; border:none; color:var(--text);
-  padding:8px 12px; border-radius:12px; cursor:pointer;
+  background:transparent; 
+  border:none; 
+  color:var(--text);
+  padding:8px 12px; 
+  border-radius:12px; 
+  cursor:pointer;
   transition: transform .05s ease, background .2s ease;
-  font-weight:600; font-size:14px;
+  font-weight:600; 
+  font-size:18px;
 }
 .nav a:hover, .nav button:hover{background:rgba(255,255,255,0.06)}
-.nav .brand{font-weight:800; letter-spacing:.2px; margin-right:2px}
+.nav .brand{cursor:pointer;font-weight:800; font-size: 18px; letter-spacing:.2px; margin-right:2px}
+
+/* INTRODUCTION HERO */
 .hero{
-  min-height: 78vh;
-  display:grid; place-items:center;
-  text-align:center;
+  min-height: 100vh;
+  display: flex;
+  /* center vertically only */
+  justify-content: center;
+  /* let the container decide horizontal alignment */
+  align-items: stretch;     /* or flex-start */
+  text-align: left;
+
+  background: linear-gradient(to bottom, rgba(11,14,20,0) 70%, var(--bg) 100%),
+  url("../assets/landing_wallpaper.jpg") center/cover no-repeat;
 }
+
+
+/* Make the inner container a left-aligned flex column */
+.hero .container {
+  width: 100%;               /* let container span */
+  max-width: 1100px;         /* same as Projects */
+  margin: 0 auto;            /* keep same side margin as Projects */
+  padding: 0 2rem;           /* same padding */
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* <<< forces all content to the LEFT */
+}
+
+/* (unchanged) */
 .hero h1{
-  font-size: clamp(28px, 4vw, 44px);
-  line-height:1.1; margin:0 0 12px;
+  font-size: 80px;
+  line-height: 1.1;
+  margin: 0 0 12px;
 }
-.hero p{color:var(--muted);max-width:720px;margin:0 auto 18px}
-.hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+.hero p{
+  color: var(--muted);
+  font-size: 20px;
+  font-weight: 500;
+  max-width: 720px;
+  margin: 0 0 18px 0;
+}
+.hero .cta{
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;  /* buttons stay left within the container */
+  flex-wrap: wrap;
+}
+
+
 .btn{
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   color:#0b0e14; font-weight:800; padding:12px 16px; border-radius:12px;

@@ -1,9 +1,9 @@
 const resume = {
   profile: {
-    name: "Bidhan Khadka",
-    title: "Computer Science @ UTA — Project Dev Lead at SCAI",
+    name: "Bidhan",
+    title: "Computer Science @ UTA",
     summary:
-      "Undergraduate at the University of Texas at Arlington (Honors, GPA 3.5). PLTL STEM Learning Facilitator and SCAI Project Development Manager. I build full-stack apps (MERN), AI chat tools, and Java projects, and I love turning data into decisions.",
+      "I am a Computer Science student at University of Texas at Arlington with a passion for Machine Learning and Software Development.",
     location: "Arlington, TX",
     email: "bidhankhadka437@gmail.com",
     phone: "682-583-6875",
