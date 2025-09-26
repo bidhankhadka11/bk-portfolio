@@ -1,7 +1,7 @@
 export default function ProjectCard({ name, desc, stack = [], links = [], img}) {
   return (
     <article className="card">
-      {img && <img src={img} className="project-img" />}
+      {img && <img src={img} className="project-img" alt="{name}" />}
       <h3>{name}</h3>
       {desc && <p>{desc}</p>}
       <div>{stack.map((s) => <span className="tag" key={s}>{s}</span>)}</div>
