@@ -1,3 +1,6 @@
+
+
+
 const resume = {
   profile: {
     name: "Bidhan",
@@ -51,24 +54,28 @@ const resume = {
       stack: ["React", "Node", "Express", "MongoDB", "Context API"],
       desc: "Full-stack fitness tracker with secure CRUD, responsive UI, and global state.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }],
+      img: "/assets/fitjournal.png",
     },
     {
       name: "PersonaAI",
       stack: ["React", "Node", "Express", "Gemini API", "CSS"],
       desc: "Conversational AI with selectable personalities and modular FE/BE architecture.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/AI-Chatbot" }],
+      img: "/assets/persona.png",
     },
     {
       name: "Genetic Algorithm (Target String)",
       stack: ["Java"],
       desc: "GA with selection, crossover, mutation; modular classes for clarity and scale.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Genetic-Algorithm" }],
+      img: "/assets/genetic.png",
     },
     {
       name: "Event-Driven Game",
       stack: ["Java", "Swing"],
       desc: "2D classic with collision detection, event loop, and multithreading.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Flappy-Bird-on-java" }],
+      img: "/assets/flappy.png"
     },
   ],
   skills: {
