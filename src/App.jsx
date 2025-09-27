@@ -25,7 +25,7 @@ export default function App() {
         </div>
       </Section>
 
-      <Section id="experience" title="Experience" className="exp">
+      <Section id="experience" title="Experience" subtitle="Where I have worked so far" className="exp">
         <div className="grid">
           {experience.map((e, i) => (
             <ExperienceCard key={i} {...e} />
@@ -33,7 +33,8 @@ export default function App() {
         </div>
       </Section>
 
-      <Section id="education" title="Education">
+
+      {/* <Section id="education" title="Education">
         {education.map((ed, i) => (
           <article key={i} className="card" style={{ marginBottom: 12 }}>
             <strong>{ed.school}</strong> — {ed.degree}{' '}
@@ -47,7 +48,7 @@ export default function App() {
             </div>
           </article>
         ))}
-      </Section>
+      </Section> */}
 
       <Section id="skills" title="Technical Skills" className="skills">
         <div className="card">
@@ -63,7 +64,7 @@ export default function App() {
 
       <Contact email={profile.email} />
 
-      <footer>© {new Date().getFullYear()} {profile.name} • Built with React</footer>
+      
     </>
   )
 }

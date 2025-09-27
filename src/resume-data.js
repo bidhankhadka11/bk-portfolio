@@ -38,7 +38,7 @@ const resume = {
     },
     {
       role: "Project Development Manager",
-      org: "SCAI — Students in Computing and AI",
+      org: "SCAI at UTA",
       location: "Arlington, TX",
       dates: "June 2025 – Present",
       bullets: [
@@ -53,7 +53,7 @@ const resume = {
       name: "FitJournal",
       stack: ["React", "Node", "Express", "MongoDB", "Context API"],
       desc: "Full-stack fitness tracker with secure CRUD, responsive UI, and global state.",
-      links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }],
+      links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }/*, {label: "LiveDemo", href: ""}*/],
       img: "/assets/fitjournal.png",
     },
     {

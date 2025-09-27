@@ -8,7 +8,7 @@ export default function ProjectCard({ name, desc, stack = [], links = [], img}) 
       {links?.length > 0 && (
         <div className="links">
           {links.map((l) => (
-            <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label}</a>
+            <a key={l.href} href={l.href} target="_blank" rel="noreferrer" className="link">{l.label}</a>
           ))}
         </div>
       )}

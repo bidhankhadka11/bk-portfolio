@@ -137,9 +137,9 @@ a{color:inherit;text-decoration:none}
   gap: 18px;
 }
 
-/* project card */
+/* PROJECT CARDS*/
 .projects .grid {
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 50px;
 }
 .card{
@@ -147,10 +147,22 @@ a{color:inherit;text-decoration:none}
   border:1px solid rgba(255,255,255,0.08);
   border-radius:18px; padding:22px;
 }
-.tag{display:inline-block; font-size:12px; color:#cffafe; background:#064e3b33; padding:4px 8px; border-radius:999px; margin:4px 6px 0 0}
+.tag{
+  display:inline-block; 
+  font-size:13px; 
+  color:#cffafe; 
+  background:#064e3b33; 
+  padding:7px 11px; 
+  border-radius:7px; 
+  margin:4px 6px 0 0}
+
+  
 .kv{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:14px; justify-content:center}
 
-.projects .card{display:flex; flex-direction:column; gap:8px}
+.projects .card{
+  display:flex; 
+  flex-direction:column; 
+  gap:8px}
 
 .project-img {
   width: 100%;
@@ -160,24 +172,86 @@ a{color:inherit;text-decoration:none}
   margin-bottom: 12px;
 }
 
+
 .projects h3{
   margin:0;
   font-size: 25px;
 }
-.projects .links{display:flex; gap:12px; flex-wrap:wrap; margin-top:6px}
-.projects .links a{font-size:14px; opacity:.9}
-.projects .links a:hover{opacity:1; text-decoration: underline}
+.projects .links{
+  display:flex; 
+  gap:12px; 
+  flex-wrap:wrap; 
+  margin-top:18px;
+  font-size:15px; 
+  opacity:.9
+}
 
-.exp .row{display:flex; flex-direction:column; gap:8px}
-.exp .role{font-weight:700}
-.exp .meta{color:var(--muted); font-size:14px}
-.exp ul{margin:6px 0 0 16px; padding:0 0 0 6px; line-height:1.6}
-.exp li{margin-bottom:6px}
+.projects .links a {
+  background:#064e3b33; 
+  padding:11px 17px; 
+  border-radius:7px;
+}
+
+.projects .links a:hover{
+  opacity:1; 
+  /* text-decoration: underline */
+  background:#09775a33; 
+
+}
+
+
+/* EXPERIENCE */
+.exp .grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 70px;
+}
+
+.exp .row{
+  display:flex; 
+  flex-direction:column; 
+  gap:8px;
+  margin-top: 10px;
+}
+
+.exp .role{
+  font-size: 25px;
+  font-weight:700
+}
+
+.exp .org {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
+.exp .meta{
+  color:var(--muted); 
+  font-size:16px
+}
+
+.exp ul{
+  margin:15px 0 0 16px; 
+  padding:0 0 0 6px; 
+  line-height:1.6}
+
+.exp li{
+  margin-bottom:6px
+}
+
+
+/* SKILLS */
 
 .skills .list{display:flex; flex-wrap:wrap; gap:10px}
 .skills .pill{background:#1f2937; border:1px solid rgba(255,255,255,0.08); color:var(--text); padding:8px 12px; border-radius:999px; font-size:14px}
 
-.contact form{display:grid; gap:12px; max-width:640px; margin:0 auto;}
+
+/* CONTACT */
+.contact form{
+  display:grid; 
+  gap:12px; 
+  max-width:800px; 
+  margin: 32px 0 0;
+}
 .contact input, .contact textarea{
   background:#0b1220; color:var(--text); border:1px solid rgba(255,255,255,0.08);
   border-radius:12px; padding:12px; font-size:15px;

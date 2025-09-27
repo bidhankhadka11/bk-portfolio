@@ -24,8 +24,8 @@ export default function Contact({ email }) {
   return (
     <section id="contact" className="section contact">
       <div className="container">
-        <h1>Contact</h1>
-        <p>Prefer email? <a href={`mailto:${email}`}>{email}</a></p>
+        <h1>Contact Me</h1>
+        <p>Let's get in touch</p>
         <form onSubmit={onSubmit}>
           <div className="row">
             <input name="name" placeholder="Your name" required />
