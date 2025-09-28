@@ -9,7 +9,7 @@ import Contact from './Components/Contact.jsx'
 // Resume data as a module
 import resume from './resume-data.js'
 
-const { profile, projects, experience, education, skills } = resume
+const { profile, projects, experience, skills } = resume
 
 export default function App() {
   return (
