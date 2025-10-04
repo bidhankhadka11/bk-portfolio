@@ -1,10 +1,13 @@
 :root {
-  --bg: #0b0e14;
+  /* --bg: #0b0e14;
+   */
+  --bg: #12091f;         /* Slightly lighter than pure black, blends with hero */
   --card: #111827;
   --muted: #9CA3AF;
   --text: #e5e7eb;
   --accent: #60a5fa;
   --accent-2: #34d399;
+
 }
 
 * {
@@ -159,10 +162,17 @@ a {
   cursor: pointer;
 }
 
+.btn:hover {
+  background: linear-gradient(90deg, #92bcf7, #63f3be);
+}
+
 .btn.secondary {
   background: #1f2937;
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.btn.secondary:hover {
+  background: #273242;
 }
 
 .grid {
@@ -268,7 +278,7 @@ a {
 .exp .org {
   font-size: 16px;
   font-weight: 600;
-  color: #1ed9fac5;
+  color: #6ee5fb;
 }
 
 .exp .meta {

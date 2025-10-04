@@ -17,7 +17,7 @@ export default function App() {
       <Nav />
       <Hero profile={profile} />
 
-      <Section id="projects" title="Projects" subtitle="Some things I’ve built and shipped." className="projects">
+      <Section id="projects" title="Projects" subtitle="A collection of projects where I experimented, learned, and delivered" className="projects">
         <div className="grid">
           {projects.map((p) => (
             <ProjectCard key={p.name} {...p} />
@@ -25,7 +25,7 @@ export default function App() {
         </div>
       </Section>
 
-      <Section id="experience" title="Experience" subtitle="Where I have worked so far" className="exp">
+      <Section id="experience" title="Experience" subtitle="Organizations and teams I’ve been fortunate to work with" className="exp">
         <div className="grid">
           {experience.map((e, i) => (
             <ExperienceCard key={i} {...e} />
