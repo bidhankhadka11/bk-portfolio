@@ -9,11 +9,24 @@ export default function Hero({ profile }) {
           <a className="btn secondary" href="#contact">Contact Me</a>
         </div>
 
+        {/* LANGUAGES  */}
         <div className="languages">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+          <div className="lang-card">
+            <img src="/assets/python.png" alt="Python"/>
+            <span>Python</span>
+          </div>
+          <div className="lang-card">
+            <img src="/assets/js.png" alt="JavaScript"/>
+            <span>JavaScript</span>
+          </div>
+          <div className="lang-card">
+            <img src="/assets/java.png" alt="Java"/>
+            <span>Java</span>
+          </div>
+          <div className="lang-card">
+            <img src="/assets/c-.png" alt="C++"/>
+            <span>C++</span>
+          </div>
         </div>
       </div>
     </header>
