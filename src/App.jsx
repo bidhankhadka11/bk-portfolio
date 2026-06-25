@@ -13,7 +13,7 @@ const { profile, projects, experience, skills } = resume
 
 export default function App() {
   return (
-    <>
+    <div className="page-frame">
       <Nav />
       <Hero profile={profile} />
 
@@ -64,7 +64,6 @@ export default function App() {
 
       <Contact email={profile.email} />
 
-      
-    </>
+    </div>
   )
 }
