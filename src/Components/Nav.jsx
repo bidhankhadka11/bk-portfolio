@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import { FiHome, FiFolder, FiBriefcase, FiMail } from 'react-icons/fi'
 
 const items = [
@@ -15,12 +15,12 @@ export default function Nav() {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
       setIsNavOpen(false)
-    }   
+    }
   }
   return (
     <nav className="nav" aria-label="Primary">
       <div className="menu" role="menubar">
-        <button type="button" className="brand" onClick={() => go('home')}>BIDHAN KHADKA</button>
+        <button type="button" className="brand" onClick={() => window.location.reload()}>BIDHAN KHADKA</button>
         <button
           type="button"
           className='hamburger'
@@ -36,14 +36,14 @@ export default function Nav() {
 
         <div
           className={`links ${isNavOpen ? 'active' : ''}`}
-          id = "nav-links"
+          id="nav-links"
         >
           {items.map((x) => (
-                <button key={x.id} role="menuitem" onClick={() => go(x.id)} aria-label={`Go to ${x.label}`}>
-                    <span className="nav-icon" aria-hidden="true">{x.icon}</span>
-                    {x.label}
-                </button>
-            ))}
+            <button key={x.id} role="menuitem" onClick={() => go(x.id)} aria-label={`Go to ${x.label}`}>
+              <span className="nav-icon" aria-hidden="true">{x.icon}</span>
+              {x.label}
+            </button>
+          ))}
         </div>
 
         <div

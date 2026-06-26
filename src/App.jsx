@@ -26,7 +26,7 @@ export default function App() {
       </Section>
 
       <Section id="experience" title="Experience" subtitle="Organizations and teams I’ve been fortunate to work with" className="exp">
-        <div className="grid">
+        <div className="exp-list">
           {experience.map((e) => (
             <ExperienceCard key={`${e.role}-${e.org}`} {...e} />
           ))}
@@ -62,7 +62,7 @@ export default function App() {
         </div>
       </Section>
 
-      <Contact email={profile.email} />
+      <Contact email={profile.email} links={profile.links} />
 
     </div>
   )

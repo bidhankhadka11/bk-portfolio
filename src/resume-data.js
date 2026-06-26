@@ -1,14 +1,22 @@
 const resume = {
   profile: {
-    name: "Bidhan",
+    name: "<Bidhan>",
     title: "Computer Science @ UTA",
-    summary:
-      "I am a Computer Science student at University of Texas at Arlington with a passion for Machine Learning and Software Development. I like building web applications and learning new technologies.",
+    summary: [
+      { text: "I am a " },
+      { text: "Computer Science student", hl: true },
+      { text: " at University of Texas at Arlington with a passion for " },
+      { text: "Machine Learning", hl: true },
+      { text: " and " },
+      { text: "Software Development", hl: true },
+      { text: ". I like building web applications and learning new technologies." },
+    ],
     location: "Arlington, TX",
     email: "bidhankhadka437@gmail.com",
     links: {
       linkedin: "https://linkedin.com/in/khadkabidhan",
       github: "https://github.com/bidhankhadka11",
+      twitter: "https://x.com/bidhan___", // user to provide real URL
     },
   },
   education: [
@@ -48,28 +56,28 @@ const resume = {
     {
       name: "FitJournal",
       stack: ["React", "Node", "Express", "MongoDB", "Context API"],
-      desc: "Full-stack fitness tracker with secure CRUD, responsive UI, and global state.",
+      desc: "A full-stack MERN fitness tracker for logging workouts by exercise name, reps, and weight. Implements complete CRUD over a REST API with global state managed through React Context and Hooks instead of an external library. Backed by MongoDB and Mongoose behind a clean, responsive UI.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }/*, {label: "LiveDemo", href: ""}*/],
       img: "/assets/fitjournal.png",
     },
     {
       name: "PersonaAI",
       stack: ["React", "Node", "Express", "Gemini API", "CSS"],
-      desc: "Conversational AI with selectable personalities and modular FE/BE architecture.",
+      desc: "A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth. Built on a client–server architecture where a React frontend talks to an Express backend exposing a /chat endpoint. Delivers real-time replies with full conversation history on desktop and mobile.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/AI-Chatbot" }],
       img: "/assets/persona.png",
     },
     {
       name: "Genetic Algorithm (Target String)",
       stack: ["Java"],
-      desc: "GA with selection, crossover, mutation; modular classes for clarity and scale.",
+      desc: "A Java genetic algorithm that evolves a population of random character strings toward a target phrase. Implements elitist selection, single-point crossover, and rate-based mutation across successive generations. Uses a clean object-oriented design (Population, Individual, GeneticAlgorithm) for clarity and scale.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Genetic-Algorithm" }],
       img: "/assets/genetic.png",
     },
     {
       name: "Event-Driven Game",
       stack: ["Java", "Swing"],
-      desc: "2D classic with collision detection, event loop, and multithreading.",
+      desc: "A Java Swing recreation of Flappy Bird with custom-rendered bird, pipes, and scrolling background. Drives continuous gameplay with a Swing Timer loop and KeyListener input for spacebar jumps. Features real-time collision detection, live score tracking, and instant restart on game over.",
       links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Flappy-Bird-on-java" }],
       img: "/assets/flappy.png"
     },

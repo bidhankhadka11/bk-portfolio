@@ -25,7 +25,8 @@
   --radius-sm: 0.3rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --frame-margin: 40px;   /* distance from browser edge to the vertical border lines */
+  --frame-margin: 40px;
+  /* distance from browser edge to the vertical border lines */
 }
 
 * {
@@ -44,7 +45,7 @@ html {
 */
 .page-frame {
   margin: 0 var(--frame-margin);
-  border-left:  1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
   border-right: 1px solid rgba(255, 255, 255, 0.15);
   min-height: 100vh;
   overflow-x: hidden;
@@ -92,7 +93,7 @@ a {
 .nav {
   position: fixed;
   top: 0;
-  left:  calc(var(--frame-margin) + 1px);
+  left: calc(var(--frame-margin) + 1px);
   right: calc(var(--frame-margin) + 1px);
   z-index: 1000;
   height: 63px;
@@ -157,17 +158,45 @@ a {
   font-weight: 700;
   font-size: 15px;
   letter-spacing: -0.3px;
-  color: var(--text);
   flex-shrink: 0;
-  background: transparent;
   border: none;
   padding: 0;
   font-family: inherit;
+  /* Animated gradient text (same color cycle as the Send button) */
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradient-shift 8s ease infinite;
 }
 
 .nav .brand:hover {
-  background: transparent;
-  color: var(--text);
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav .brand {
+    animation: none;
+  }
 }
 
 /* --- HAMBURGER --- */
@@ -201,16 +230,20 @@ a {
   /* offset fixed nav */
   min-height: calc(100vh - 63px);
   display: flex;
+  flex-direction: column;
   align-items: center;
+  padding: 40px 0 28px;
   background: var(--page-bg);
   border-bottom: 1px solid var(--border);
 }
 
 .hero .container {
   width: 100%;
-  padding: 80px 1.5rem;
+  flex: 1 1 auto;
+  padding: 24px 1.5rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
 }
 
@@ -230,13 +263,37 @@ a {
   color: var(--accent);
 }
 
+/* Typewriter caret after the hero title */
+.hero .container h1 .caret {
+  color: var(--accent);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+/* Steady while typing, blinks once typing finishes */
+.hero .container h1 .caret.blink {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 .hero p {
   color: var(--muted);
-  font-size: 18px;
-  font-weight: 400;
+  font-size: 50px;
+  font-weight: 600;
   max-width: 580px;
   margin: 0 0 28px;
   line-height: 1.65;
+}
+
+/* Highlighted phrases inside body text */
+.hl {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .hero .cta {
@@ -258,7 +315,7 @@ a {
 /* Subtitle text under each section heading */
 .section>.container>p {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 16px;
   margin: 0 0 4px;
   line-height: 1.6;
 }
@@ -271,7 +328,7 @@ a {
   font-weight: 600;
   font-size: 14px;
   padding: 9px 18px;
-  border-radius: var(--radius-md);
+  /* border-radius: var(--radius-md); */
   border: none;
   cursor: pointer;
   font-family: inherit;
@@ -341,6 +398,72 @@ a {
   color: var(--muted);
 }
 
+/* --- SOCIAL LINKS (hero) --- */
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  margin-top: 40px;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 23px;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.social-link:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* --- TECH MARQUEE (hero bottom strip) --- */
+.tech-marquee {
+  width: 100%;
+  overflow: hidden;
+  padding: 28px 0;
+  /* Fade icons out toward the frame borders instead of a hard cut */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Motion is driven by requestAnimationFrame in Hero.jsx so the speed can
+   ease smoothly between fast and slow on hover (no animation-duration jump). */
+.tech-track {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  width: max-content;
+  will-change: transform;
+}
+
+.tech-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 40px;
+  padding: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.25s ease, color 0.25s ease, filter 0.25s ease;
+}
+
+/* Let the whole icon box catch hover, not just the painted glyph pixels */
+.tech-icon svg {
+  display: block;
+  pointer-events: none;
+}
+
+/* Hovered icon glows amber and enlarges */
+.tech-icon:hover {
+  color: var(--accent);
+  transform: scale(1.55);
+  filter: drop-shadow(0 0 10px rgba(255, 192, 76, 0.65));
+}
+
 /* --- CARDS (projects, experience, skills) --- */
 .card {
   background: var(--card);
@@ -357,56 +480,117 @@ a {
 }
 
 /* --- PROJECTS --- */
+/* Cards tile into one block. The grid's whitish background shows through the
+   1px gaps as uniform dividers, and the 1px outer border closes the rectangle —
+   so every line is exactly 1px, with no doubling where cards meet. */
 .projects .grid {
   display: grid;
   gap: 1px;
-  grid-template-columns: 1fr;
-  /* single-column rows like reference */
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  grid-template-columns: repeat(2, 1fr);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   overflow: hidden;
   margin-top: 28px;
 }
 
-/* Project list-item row (matches aihero.dev content row style) */
+/* Vertical project card: large image on top, details below. */
 .projects .card {
+  position: relative;
   border-radius: 0;
   border: none;
   background: var(--card);
-  flex-direction: row;
-  gap: 20px;
-  align-items: flex-start;
-  padding: 22px 28px;
-  transition: background 0.12s ease;
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+  padding: 0 0 18px;
+  overflow: hidden;
+  transition: background 0.15s ease;
 }
 
 .projects .card:hover {
   background: var(--card-alt);
-  border-color: transparent;
+}
+
+/* Animated gradient inner border on hover (same color cycle as the Send button) */
+.projects .card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 4px solid transparent;
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c) border-box;
+  background-size: 300% 100%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.projects .card:hover::after {
+  opacity: 1;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects .card:hover::after {
+    animation: none;
+  }
+}
+
+/* Fixed-size frame that clips the zoom so the image enlarges "inside" it */
+.project-media {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .project-img {
-  width: 140px;
-  height: 92px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: top left;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-  border: 1px solid var(--border);
+  border-radius: 0;
+  display: block;
+  border: none;
+  transition: transform 0.4s ease;
+}
+
+/* Zoom the image (clipped within its frame) when hovering the whole card */
+.projects .card:hover .project-img {
+  transform: scale(1.08);
 }
 
 .projects .card-body {
   flex: 1;
   min-width: 0;
+  padding: 25px 25px 10px;
 }
 
 .projects h3 {
   margin: 0 0 4px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.2px;
+  transition: color 0.15s ease;
+}
+
+.projects .card:hover h3 {
+  color: var(--accent);
 }
 
 .card p {
@@ -418,6 +602,7 @@ a {
 
 .tag {
   display: inline-block;
+  margin-top: 20px;
   font-size: 11px;
   font-weight: 500;
   color: var(--muted);
@@ -425,8 +610,16 @@ a {
   border: 1px solid var(--border);
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  margin: 6px 4px 0 0;
+  margin: 34px 4px 0 0;
   letter-spacing: 0.01em;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* Lighten the tech tags on hover */
+.projects .tag:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text);
 }
 
 .projects .links {
@@ -453,61 +646,144 @@ a {
   border-color: rgba(255, 192, 76, 0.5);
 }
 
-/* --- EXPERIENCE --- */
-.exp .grid {
-  grid-template-columns: 1fr;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+/* --- EXPERIENCE (horizontal boxes) --- */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 28px;
 }
 
-.exp .card {
+/* One experience per row: details on the left, date/location on the right */
+.exp-card {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0;
-  border: none;
-  padding: 24px;
+  padding: 34px 38px;
+  overflow: hidden;
+  transition: background 0.15s ease;
 }
 
-.exp .card:hover {
+/* Collapse shared edges so stacked boxes read as a single block */
+.exp-card:not(:first-child) {
+  margin-top: -1px;
+}
+
+.exp-card:hover {
   background: var(--card-alt);
 }
 
-.exp .row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+/* Animated gradient inner border on hover (same as project cards) */
+.exp-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 4px solid transparent;
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c) border-box;
+  background-size: 300% 100%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-.exp .role {
-  font-size: 16px;
+.exp-card:hover::after {
+  opacity: 1;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.exp-main {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.exp-role {
+  margin: 0;
+  font-size: 19px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.2px;
 }
 
-.exp .org {
-  font-size: 14px;
+.exp-org {
+  font-size: 17px;
   font-weight: 500;
   color: var(--accent);
 }
 
-.exp .meta {
+.exp-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  flex-shrink: 0;
   color: var(--muted);
   font-size: 13px;
-  margin-top: 2px;
+  text-align: right;
 }
 
-.exp ul {
+.exp-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.exp-meta svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.exp-card .exp-desc {
   margin: 12px 0 0 0;
-  padding: 0 0 0 18px;
-  line-height: 1.6;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.65;
 }
 
-.exp li {
-  margin-bottom: 5px;
+@media (prefers-reduced-motion: reduce) {
+  .exp-card:hover::after {
+    animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .exp-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .exp-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    text-align: left;
+  }
 }
 
 /* --- SKILLS --- */
@@ -536,23 +812,74 @@ a {
 }
 
 /* --- CONTACT --- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 32px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.contact-lead {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 360px;
+  margin: 0;
+}
+
+.contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.contact-email svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.contact-email:hover {
+  color: var(--accent);
+}
+
+/* Social row reuses the hero .social-row / .social-link styles */
+.contact-info .social-row {
+  margin-top: 0;
+}
+
 .contact form {
   display: grid;
-  gap: 10px;
-  max-width: 560px;
-  margin: 32px 0 0;
+  gap: 12px;
+  margin: 0;
 }
 
 .contact input,
 .contact textarea {
-  background: var(--input-bg);
+  background: var(--bg);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0;
+  padding: 12px 14px;
   font-size: 14px;
   font-family: inherit;
-  transition: border-color 0.12s ease;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.contact textarea {
+  resize: vertical;
 }
 
 .contact input::placeholder,
@@ -569,7 +896,7 @@ a {
 
 .contact .row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -577,9 +904,61 @@ a {
   flex: 1 1 220px;
 }
 
+/* Sharp-cornered buttons to match the rectangle form fields */
+.contact .btn {
+  border-radius: 0;
+}
+
+/* Send button: slowly shifting multi-color gradient */
+.contact .gradient-btn {
+  color: #000;
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c);
+  background-size: 300% 100%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.contact .gradient-btn:hover {
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(255, 192, 76, 0.2);
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact .gradient-btn {
+    animation: none;
+  }
+}
+
 .contact small {
   color: var(--muted);
   font-size: 12px;
+}
+
+@media (min-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 0.85fr 1.15fr;
+    align-items: start;
+    gap: 56px;
+  }
 }
 
 footer {
@@ -602,12 +981,16 @@ footer {
 
 /* Tablet */
 @media (max-width: 1024px) {
-  :root { --frame-margin: 24px; }
+  :root {
+    --frame-margin: 24px;
+  }
 }
 
 /* Large phone / small tablet */
 @media (max-width: 768px) {
-  :root { --frame-margin: 10px; }
+  :root {
+    --frame-margin: 10px;
+  }
 
   .section {
     padding: 56px 0;
@@ -711,29 +1094,33 @@ footer {
     font-size: 16px;
   }
 
-  .projects .card {
-    flex-direction: column;
-    padding: 16px;
+  .tech-track {
+    gap: 32px;
   }
 
-  .project-img {
-    width: 100%;
+  .tech-icon {
+    font-size: 30px;
+  }
+
+  .projects .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-media {
     height: auto;
     aspect-ratio: 16 / 9;
   }
 
-  .projects .card-body {
-    width: 100%;
-  }
-
-  .exp .role {
-    font-size: 15px;
+  .exp-role {
+    font-size: 19px;
   }
 }
 
 /* Small phone — border nearly touches edge */
 @media (max-width: 480px) {
-  :root { --frame-margin: 4px; }
+  :root {
+    --frame-margin: 4px;
+  }
 
   .hero .container h1 {
     font-size: 34px;
@@ -747,13 +1134,5 @@ footer {
 
   .container {
     padding: 0 1rem;
-  }
-}
-
-@media (min-width: 768px) {
-
-  /* Projects stay single-column to match reference row layout */
-  .exp .grid {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
