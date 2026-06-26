@@ -57,6 +57,7 @@ body {
   color: var(--text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a {
@@ -120,6 +121,8 @@ a {
 
 .nav button,
 .nav a {
+  display: inline-flex;
+  align-items: center;
   background: transparent;
   border: none;
   color: var(--muted);
@@ -131,6 +134,16 @@ a {
   font-size: 14px;
   font-family: inherit;
   letter-spacing: 0;
+}
+
+/* Nav item icons — hidden on desktop, shown in the mobile slide-in panel */
+.nav-icon {
+  display: none;
+}
+
+/* Mobile slide-in backdrop — only visible on mobile when menu is open */
+.nav-backdrop {
+  display: none;
 }
 
 .nav a:hover,
@@ -146,15 +159,24 @@ a {
   letter-spacing: -0.3px;
   color: var(--text);
   flex-shrink: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.nav .brand:hover {
+  background: transparent;
+  color: var(--text);
 }
 
 /* --- HAMBURGER --- */
-.hamburger {
+.nav .hamburger {
   display: none;
   flex-direction: column;
   justify-content: space-around;
-  width: 2.5rem;
-  height: 2rem;
+  width: 1.6rem;
+  height: 1.4rem;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -224,7 +246,8 @@ a {
 }
 
 /* Section headings (outside hero) */
-.container h1 {
+.container h1,
+.container h2 {
   font-size: 40px;
   font-weight: 800;
   letter-spacing: -1px;
@@ -615,29 +638,68 @@ footer {
     padding: 8px 14px;
   }
 
-  .hamburger {
+  .nav .hamburger {
     display: flex;
   }
 
+  /* Mobile slide-in panel — 60% from the right, off-screen until active */
   .nav .links {
-    display: none;
-  }
-
-  /* Mobile menu overlay — 1px inside the frame border */
-  .nav .links.active {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    align-items: flex-start;
+    gap: 6px;
     position: fixed;
     top: 63px;
-    left:  calc(var(--frame-margin) + 1px);
-    right: calc(var(--frame-margin) + 1px);
+    right: 0;
+    width: 60%;
     height: calc(100vh - 63px);
-    padding-top: 40px;
+    padding: 40px 24px;
     background: var(--bg);
-    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    pointer-events: none;
     overflow-y: auto;
+    z-index: 1001;
+  }
+
+  .nav .links.active {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* Bold links + show icons inside the mobile panel */
+  .nav .links button {
+    width: 100%;
+    justify-content: flex-start;
+    font-weight: 700;
+  }
+
+  .nav .links .nav-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+    font-size: 18px;
+  }
+
+  /* Dim the remaining 40% behind the panel; tap to close */
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    top: 63px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+
+  .nav-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .hero .container h1 {

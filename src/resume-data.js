@@ -6,7 +6,6 @@ const resume = {
       "I am a Computer Science student at University of Texas at Arlington with a passion for Machine Learning and Software Development. I like building web applications and learning new technologies.",
     location: "Arlington, TX",
     email: "bidhankhadka437@gmail.com",
-    phone: "682-583-6875",
     links: {
       linkedin: "https://linkedin.com/in/khadkabidhan",
       github: "https://github.com/bidhankhadka11",

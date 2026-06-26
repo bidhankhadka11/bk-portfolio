@@ -27,8 +27,8 @@ export default function App() {
 
       <Section id="experience" title="Experience" subtitle="Organizations and teams I’ve been fortunate to work with" className="exp">
         <div className="grid">
-          {experience.map((e, i) => (
-            <ExperienceCard key={i} {...e} />
+          {experience.map((e) => (
+            <ExperienceCard key={`${e.role}-${e.org}`} {...e} />
           ))}
         </div>
       </Section>

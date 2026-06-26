@@ -1,4 +1,4 @@
-export default function ExperienceCard({ role, org, location, dates, bullets = [] }) {
+export default function ExperienceCard({ role, org, dates, bullets = [] }) {
   return (
     <article className="card">
       <div className="row">
