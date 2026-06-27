@@ -9,7 +9,7 @@ import Contact from './Components/Contact.jsx'
 // Resume data as a module
 import resume from './resume-data.js'
 
-const { profile, projects, experience, skills } = resume
+const { profile, projects, experience } = resume
 
 export default function App() {
   return (
@@ -49,18 +49,6 @@ export default function App() {
           </article>
         ))}
       </Section> */}
-
-      <Section id="skills" title="Technical Skills" className="skills">
-        <div className="card">
-          <div className="list">
-            {[...(skills.languages || []), ...(skills.frameworks || []), ...(skills.tools || []), ...(skills.libraries || [])].map((s) => (
-              <span className="tag" key={s}>
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      </Section>
 
       <Contact email={profile.email} links={profile.links} />
 

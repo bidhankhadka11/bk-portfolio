@@ -54,6 +54,20 @@ const resume = {
   ],
   projects: [
     {
+      name: "Rarify",
+      stack: ["Kotlin", "Jetpack Compose", "Material 3", "SQLite", "DataStore"],
+      desc: "A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles. Buyers browse, search, favorite, and run a full cart-to-checkout flow while sellers create and manage listings. Built with Jetpack Compose and Material 3, with admin moderation tools and light/dark themes persisted via DataStore.",
+      links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/rarify-marketplace" }],
+      img: "/assets/rarify.png",
+    },
+    {
+      name: "Software Defect Classifier (Kaggle)",
+      stack: ["Python", "scikit-learn", "Random Forest", "pandas", "Matplotlib"],
+      desc: "A Kaggle binary-classification project that predicts whether a C code module contains a software defect from its complexity metrics. Uses a class-balanced Random Forest (200 trees) with RobustScaler preprocessing and engineering of near-zero features to curb overfitting. Evaluated with ROC-AUC, reaching ~0.79 on the validation split.",
+      links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/binaryclassification" }],
+      img: "/assets/binaryclassification.png",
+    },
+    {
       name: "FitJournal",
       stack: ["React", "Node", "Express", "MongoDB", "Context API"],
       desc: "A full-stack MERN fitness tracker for logging workouts by exercise name, reps, and weight. Implements complete CRUD over a REST API with global state managed through React Context and Hooks instead of an external library. Backed by MongoDB and Mongoose behind a clean, responsive UI.",

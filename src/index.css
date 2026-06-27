@@ -993,26 +993,17 @@ footer {
   }
 
   .section {
-    padding: 56px 0;
+    padding: 48px 0;
   }
 
   .nav .menu {
     padding: 0 16px;
   }
 
+  /* Show the full gradient brand on mobile (smaller). The old "BK" ::after
+     trick inherited transparent text-fill from the gradient and vanished. */
   .nav .brand {
-    visibility: hidden;
-    position: relative;
-    font-size: 0;
-  }
-
-  .nav .brand::after {
-    visibility: visible;
-    content: "BK";
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: -0.3px;
-    color: var(--text);
+    font-size: 14px;
   }
 
   .nav button,
@@ -1111,8 +1102,73 @@ footer {
     aspect-ratio: 16 / 9;
   }
 
+  /* Smaller section headings + subtitles on mobile (hero is unaffected — it
+     has its own more-specific .hero .container h1 rules) */
+  .container h1,
+  .container h2 {
+    font-size: 27px;
+    letter-spacing: -0.5px;
+  }
+
+  .section > .container > p {
+    font-size: 14px;
+  }
+
+  /* Projects: tighter cards + text */
+  .projects .card-body {
+    padding: 16px 16px 8px;
+  }
+
+  .projects h3 {
+    font-size: 16px;
+  }
+
+  .card p {
+    font-size: 12.5px;
+  }
+
+  .tag {
+    margin-top: 16px;
+  }
+
+  /* Experience: tighter boxes + text */
+  .exp-card {
+    padding: 20px 18px;
+  }
+
   .exp-role {
-    font-size: 19px;
+    font-size: 16px;
+  }
+
+  .exp-org {
+    font-size: 14px;
+  }
+
+  .exp-card .exp-desc {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  .exp-meta {
+    font-size: 12px;
+  }
+
+  /* Skills: drop the large per-tag top margin so the list stays compact */
+  .skills .card {
+    padding: 16px;
+  }
+
+  .skills .tag {
+    margin: 0;
+  }
+
+  /* Contact: tighter spacing */
+  .contact-grid {
+    gap: 28px;
+  }
+
+  .contact-lead {
+    font-size: 14px;
   }
 }
 
@@ -1127,9 +1183,13 @@ footer {
     letter-spacing: -1px;
   }
 
-  .projects .card {
-    padding: 12px;
-    gap: 12px;
+  .container h1,
+  .container h2 {
+    font-size: 24px;
+  }
+
+  .projects .card-body {
+    padding: 13px 13px 6px;
   }
 
   .container {
