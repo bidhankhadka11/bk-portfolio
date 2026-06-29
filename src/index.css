@@ -232,7 +232,9 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 0 28px;
+  /* No bottom padding: the marquee sits flush against the bottom border so its
+     symmetric 28px top/bottom padding centers the icons between the two lines. */
+  padding: 40px 0 0;
   background: var(--page-bg);
   border-bottom: 1px solid var(--border);
 }
@@ -242,9 +244,50 @@ a {
   flex: 1 1 auto;
   padding: 24px 1.5rem;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+}
+
+/* Text column keeps the original left-aligned stacked layout */
+.hero-text {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  min-width: 0;
+}
+
+/* Headshot lives in the empty right space. Sized by height (bounded) with a
+   small max-width so it can never push or move the hero text. */
+.hero-figure {
+  /* Bottom-align so the headshot sits on the divider line; the negative
+     margin cancels the container's 24px bottom padding so it touches exactly. */
+  align-self: flex-end;
+  margin: 0 0 -24px;
+  padding-right: 20px;
+  flex-shrink: 0;
+  max-width: 40%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.hero-img {
+  height: clamp(320px, 65vh, 520px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Only show the headshot where there's clearly room (wide desktop) so the
+   text layout at smaller sizes stays exactly as it was. */
+@media (max-width: 1024px) {
+  .hero-figure {
+    display: none;
+  }
 }
 
 .hero .container h1 {
@@ -283,11 +326,11 @@ a {
 
 .hero p {
   color: var(--muted);
-  font-size: 50px;
-  font-weight: 600;
-  max-width: 580px;
+  font-size: 17px;
+  font-weight: 500;
+  max-width: 560px;
   margin: 0 0 28px;
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
 /* Highlighted phrases inside body text */
@@ -422,6 +465,14 @@ a {
 }
 
 /* --- TECH MARQUEE (hero bottom strip) --- */
+/* Full-width line above the marquee (sits just below where the headshot ends).
+   Kept separate from .tech-marquee so the marquee's edge-fade mask doesn't
+   fade the line's ends — it runs solid all the way to the frame borders. */
+.hero-divider {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
 .tech-marquee {
   width: 100%;
   overflow: hidden;
@@ -996,6 +1047,11 @@ footer {
     padding: 48px 0;
   }
 
+  /* Keep the hero flush to its bottom border so the marquee stays centered */
+  .hero {
+    padding-bottom: 0;
+  }
+
   .nav .menu {
     padding: 0 16px;
   }
@@ -1110,7 +1166,7 @@ footer {
     letter-spacing: -0.5px;
   }
 
-  .section > .container > p {
+  .section>.container>p {
     font-size: 14px;
   }
 

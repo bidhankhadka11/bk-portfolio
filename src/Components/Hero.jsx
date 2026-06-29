@@ -113,34 +113,44 @@ export default function Hero({ profile }) {
   return (
     <header id="home" className="hero section">
       <div className="container">
-        <h1>
-          {shownPrefix}
-          <em>{shownName}</em>
-          <span className={`caret${doneTyping ? ' blink' : ''}`} aria-hidden="true">|</span>
-        </h1>
-        <p>
-          {profile.summary.map((part, i) =>
-            part.hl ? <span className="hl" key={i}>{part.text}</span> : part.text
-          )}
-        </p>
-        <div className="cta" style={{ marginTop: 14 }}>
-          <a className="btn" href="#projects">See Projects</a>
-          <a className="btn secondary" href="#contact">Contact Me</a>
+        <div className="hero-text">
+          <h1>
+            {shownPrefix}
+            <em>{shownName}</em>
+            <span className={`caret${doneTyping ? ' blink' : ''}`} aria-hidden="true">|</span>
+          </h1>
+          <p>
+            {profile.summary.map((part, i) =>
+              part.hl ? <span className="hl" key={i}>{part.text}</span> : part.text
+            )}
+          </p>
+          <div className="cta" style={{ marginTop: 14 }}>
+            <a className="btn" href="#projects">See Projects</a>
+            <a className="btn secondary" href="#contact">Contact Me</a>
+          </div>
+
+          {/* SOCIAL LINKS  */}
+          <div className="social-row">
+            {profile.links?.github && (
+              <a className="social-link" href={profile.links.github} target="_blank" rel="noreferrer" aria-label="GitHub"><FiGithub /></a>
+            )}
+            {profile.links?.linkedin && (
+              <a className="social-link" href={profile.links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a>
+            )}
+            {profile.links?.twitter && (
+              <a className="social-link" href={profile.links.twitter} target="_blank" rel="noreferrer" aria-label="Twitter"><FiTwitter /></a>
+            )}
+          </div>
         </div>
 
-        {/* SOCIAL LINKS  */}
-        <div className="social-row">
-          {profile.links?.github && (
-            <a className="social-link" href={profile.links.github} target="_blank" rel="noreferrer" aria-label="GitHub"><FiGithub /></a>
-          )}
-          {profile.links?.linkedin && (
-            <a className="social-link" href={profile.links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a>
-          )}
-          {profile.links?.twitter && (
-            <a className="social-link" href={profile.links.twitter} target="_blank" rel="noreferrer" aria-label="Twitter"><FiTwitter /></a>
-          )}
-        </div>
+        {/* HEADSHOT — sits in the empty right space, sized so it never pushes the text */}
+        <figure className="hero-figure">
+          <img className="hero-img" src="/assets/Headshot_half_body.png" alt="Bidhan Khadka" />
+        </figure>
       </div>
+
+      {/* Divider line right above the tech marquee */}
+      <div className="hero-divider" aria-hidden="true" />
 
       {/* SCROLLING TECH MARQUEE */}
       <div className="tech-marquee" aria-hidden="true" ref={marqueeRef}>
