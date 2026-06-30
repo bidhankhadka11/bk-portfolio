@@ -29,7 +29,10 @@
      Normally 40px, but on wide screens it grows so the bordered page caps at
      ~1400px wide and stays centered. Nav uses the same var, so it stays in sync.
      Change 1400px to make the page wider/narrower. */
-  --frame-margin: max(40px, calc((100vw - 1400px) / 2));
+  --frame-margin: max(40px, (100vw - 1400px) / 2);
+  /* --frame-margin + 1px, pre-computed so the nav can use a plain var() (avoids
+     calc(var() + 1px) wrapping a max(), which breaks the CSS minifier). */
+  --frame-inset: max(41px, (100vw - 1400px) / 2 + 1px);
 }
 
 * {
@@ -96,8 +99,8 @@ a {
 .nav {
   position: fixed;
   top: 0;
-  left: calc(var(--frame-margin) + 1px);
-  right: calc(var(--frame-margin) + 1px);
+  left: var(--frame-inset);
+  right: var(--frame-inset);
   z-index: 1000;
   height: 63px;
 }
