@@ -25,8 +25,11 @@
   --radius-sm: 0.3rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --frame-margin: 40px;
-  /* distance from browser edge to the vertical border lines */
+  /* Distance from the browser edge to the vertical border lines.
+     Normally 40px, but on wide screens it grows so the bordered page caps at
+     ~1400px wide and stays centered. Nav uses the same var, so it stays in sync.
+     Change 1400px to make the page wider/narrower. */
+  --frame-margin: max(40px, calc((100vw - 1400px) / 2));
 }
 
 * {
@@ -197,6 +200,10 @@ a {
   .nav .brand {
     animation: none;
   }
+
+  .wave {
+    animation: none;
+  }
 }
 
 /* --- HAMBURGER --- */
@@ -237,6 +244,64 @@ a {
   padding: 40px 0 0;
   background: var(--page-bg);
   border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+/* --- HERO LIQUID WAVE BACKDROP --- */
+/* Flowing vertical amber wave lines behind the hero row only (sits inside the
+   container, so it's strictly between the top and the divider — never reaches
+   the marquee). Overshoots right to the frame; clipped by .page-frame overflow.
+   Fades to transparent on the LEFT so there are no waves behind the text. */
+.hero-waves {
+  position: absolute;
+  /* top: -40px counteracts the hero's 40px padding-top so the lines reach up to
+     the nav border; bottom: 0 ends them exactly at the divider. */
+  top: -40px;
+  bottom: 0;
+  left: 0;
+  right: -340px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Fade ONLY on the left (no fade top/bottom — lines run to the borders) */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 40%, #000 66%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 30%, #000 66%);
+}
+
+.hero-waves svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave {
+  fill: none;
+  /* stroke: var(--accent); */
+  stroke: var(--accent);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.3;
+  will-change: transform;
+  animation-name: wave-flow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes wave-flow {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-300px);
+  }
+}
+
+/* Keep hero content above the wave backdrop */
+.hero-text,
+.hero-figure {
+  position: relative;
+  z-index: 1;
 }
 
 .hero .container {
@@ -247,7 +312,8 @@ a {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 48px;
+  gap: 24px;
+  position: relative;
 }
 
 /* Text column keeps the original left-aligned stacked layout */
@@ -257,6 +323,9 @@ a {
   justify-content: center;
   align-items: flex-start;
   min-width: 0;
+  /* Sit above the color-band backdrop */
+  position: relative;
+  z-index: 1;
 }
 
 /* Headshot lives in the empty right space. Sized by height (bounded) with a
@@ -266,15 +335,19 @@ a {
      margin cancels the container's 24px bottom padding so it touches exactly. */
   align-self: flex-end;
   margin: 0 0 -24px;
-  padding-right: 20px;
   flex-shrink: 0;
   max-width: 40%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  /* Sit above the color-band backdrop */
+  position: relative;
+  z-index: 1;
 }
 
 .hero-img {
+  position: relative;
+  z-index: 1;
   height: clamp(320px, 65vh, 520px);
   width: auto;
   max-width: 100%;
@@ -282,11 +355,21 @@ a {
   display: block;
 }
 
-/* Only show the headshot where there's clearly room (wide desktop) so the
-   text layout at smaller sizes stays exactly as it was. */
-@media (max-width: 1024px) {
+/* Only show the headshot where there's clearly room beside the title (so the
+   "Hi, I'm <Bidhan>" line never has to wrap). Below this the text goes
+   full-width and the title fits on one line on its own. */
+@media (max-width: 1199px) {
   .hero-figure {
     display: none;
+  }
+}
+
+/* On tall viewports (large monitors), don't stretch the hero to the full
+   screen — size it to its content so the page isn't mostly empty and the
+   next section is visible. Shorter screens keep the full-height landing look. */
+@media (min-height: 900px) {
+  .hero {
+    min-height: auto;
   }
 }
 

@@ -29,6 +29,32 @@ const tech = [
   { name: 'Pandas', icon: <SiPandas /> },
 ]
 
+// Smooth vertical wave path (sine-like via reflected quadratic curves) — runs
+// top→bottom, undulating left/right. One wavelength = 300 user units, so a
+// -300px vertical translate loops seamlessly.
+function wavePath(baseX, amp) {
+  const half = 150
+  const y0 = -600
+  const y1 = 1200
+  let d = `M ${baseX} ${y0} Q ${baseX - amp} ${y0 + half / 2} ${baseX} ${y0 + half}`
+  let y = y0 + half
+  while (y < y1) {
+    y += half
+    d += ` T ${baseX} ${y}`
+  }
+  return d
+}
+
+// Stacked vertical lines drifting at slightly different speeds = "liquid" feel.
+const waveLines = Array.from({ length: 50 }, (_, i) => (
+  <path
+    key={i}
+    className="wave"
+    d={wavePath(15 + i * 44, 18 + (i % 3) * 12)}
+    style={{ animationDuration: `${8 + i * 0.7}s`, animationDelay: `${-i * 1.1}s` }}
+  />
+))
+
 export default function Hero({ profile }) {
   const marqueeRef = useRef(null)
   const trackRef = useRef(null)
@@ -113,6 +139,38 @@ export default function Hero({ profile }) {
   return (
     <header id="home" className="hero section">
       <div className="container">
+        {/* Flowing liquid vertical wave-line backdrop (confined to this row) */}
+        <div className="hero-waves" aria-hidden="true">
+          <svg viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              {/* Same animated multi-color gradient as the borders/brand. Repeats
+                  across the width and scrolls horizontally so the colors cycle. */}
+              <linearGradient
+                id="waveGrad"
+                gradientUnits="userSpaceOnUse"
+                x1="0" y1="0" x2="480" y2="0"
+                spreadMethod="repeat"
+              >
+                <stop offset="0" stopColor="#ffc04c" />
+                <stop offset="0.2" stopColor="#ff8a3c" />
+                <stop offset="0.4" stopColor="#ff5f8f" />
+                <stop offset="0.6" stopColor="#a855f7" />
+                <stop offset="0.8" stopColor="#4cb8ff" />
+                <stop offset="1" stopColor="#ffc04c" />
+                <animateTransform
+                  attributeName="gradientTransform"
+                  type="translate"
+                  from="0 0"
+                  to="480 0"
+                  dur="8s"
+                  repeatCount="indefinite"
+                />
+              </linearGradient>
+            </defs>
+            {waveLines}
+          </svg>
+        </div>
+
         <div className="hero-text">
           <h1>
             {shownPrefix}
