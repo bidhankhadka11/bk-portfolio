@@ -1,0 +1,234 @@
+/*
+================================================================
+  RESPONSIVE — frame margin shrinks as viewport narrows so the
+  borders move toward the browser edge on small screens.
+  Nav left/right uses the same --frame-margin variable, so
+  they always stay in sync with the vertical border lines.
+================================================================
+*/
+
+/* Tablet */
+@media (max-width: 1024px) {
+  :root {
+    --frame-margin: 24px;
+    --frame-inset: 25px;
+  }
+}
+
+/* Large phone / small tablet */
+@media (max-width: 768px) {
+  :root {
+    --frame-margin: 10px;
+    --frame-inset: 11px;
+  }
+
+  .section {
+    padding: 48px 0;
+  }
+
+  /* Keep the hero flush to its bottom border so the marquee stays centered */
+  .hero {
+    padding-bottom: 0;
+  }
+
+  .nav .menu {
+    padding: 0 16px;
+  }
+
+  /* Show the full gradient brand on mobile (smaller). The old "BK" ::after
+     trick inherited transparent text-fill from the gradient and vanished. */
+  .nav .brand {
+    font-size: 14px;
+  }
+
+  .nav button,
+  .nav a {
+    font-size: 15px;
+    padding: 8px 14px;
+  }
+
+  .nav .hamburger {
+    display: flex;
+  }
+
+  /* Mobile slide-in panel — 60% from the right, off-screen until active */
+  .nav .links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    position: fixed;
+    top: 63px;
+    right: 0;
+    width: 60%;
+    height: calc(100vh - 63px);
+    padding: 40px 24px;
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    pointer-events: none;
+    overflow-y: auto;
+    z-index: 1001;
+  }
+
+  .nav .links.active {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* Bold links + show icons inside the mobile panel */
+  .nav .links button {
+    width: 100%;
+    justify-content: flex-start;
+    font-weight: 700;
+  }
+
+  .nav .links .nav-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+    font-size: 18px;
+  }
+
+  /* Dim the remaining 40% behind the panel; tap to close */
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    top: 63px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+
+  .nav-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hero .container h1 {
+    font-size: 42px;
+    letter-spacing: -1.5px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .tech-track {
+    gap: 32px;
+  }
+
+  .tech-icon {
+    font-size: 30px;
+  }
+
+  .projects .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-media {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Smaller section headings + subtitles on mobile (hero is unaffected — it
+     has its own more-specific .hero .container h1 rules) */
+  .container h1,
+  .container h2 {
+    font-size: 27px;
+    letter-spacing: -0.5px;
+  }
+
+  .section>.container>p {
+    font-size: 14px;
+  }
+
+  /* Projects: tighter cards + text */
+  .projects .card-body {
+    padding: 16px 16px 8px;
+  }
+
+  .projects h3 {
+    font-size: 16px;
+  }
+
+  .card p {
+    font-size: 12.5px;
+  }
+
+  .tag {
+    margin-top: 16px;
+  }
+
+  /* Experience: tighter boxes + text */
+  .exp-card {
+    padding: 20px 18px;
+  }
+
+  .exp-role {
+    font-size: 16px;
+  }
+
+  .exp-org {
+    font-size: 14px;
+  }
+
+  .exp-card .exp-desc {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  .exp-meta {
+    font-size: 12px;
+  }
+
+  /* Skills: drop the large per-tag top margin so the list stays compact */
+  .skills .card {
+    padding: 16px;
+  }
+
+  .skills .tag {
+    margin: 0;
+  }
+
+  /* Contact: tighter spacing */
+  .contact-grid {
+    gap: 28px;
+  }
+
+  .contact-lead {
+    font-size: 14px;
+  }
+}
+
+/* Small phone — border nearly touches edge */
+@media (max-width: 480px) {
+  :root {
+    --frame-margin: 4px;
+    --frame-inset: 5px;
+  }
+
+  .hero .container h1 {
+    font-size: 34px;
+    letter-spacing: -1px;
+  }
+
+  .container h1,
+  .container h2 {
+    font-size: 24px;
+  }
+
+  .projects .card-body {
+    padding: 13px 13px 6px;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+}

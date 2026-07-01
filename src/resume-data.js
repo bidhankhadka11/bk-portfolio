@@ -16,7 +16,7 @@ const resume = {
     links: {
       linkedin: "https://linkedin.com/in/khadkabidhan",
       github: "https://github.com/bidhankhadka11",
-      twitter: "https://x.com/bidhan___", // user to provide real URL
+      twitter: "https://x.com/bidhan___",
     },
   },
   education: [

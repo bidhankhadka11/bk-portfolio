@@ -1,0 +1,149 @@
+/* --- CONTACT --- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 32px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.contact-lead {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 360px;
+  margin: 0;
+}
+
+.contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.contact-email svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.contact-email:hover {
+  color: var(--accent);
+}
+
+/* Social row reuses the hero .social-row / .social-link styles */
+.contact-info .social-row {
+  margin-top: 0;
+}
+
+.contact form {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.contact input,
+.contact textarea {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.contact textarea {
+  resize: vertical;
+}
+
+.contact input::placeholder,
+.contact textarea::placeholder {
+  color: rgba(163, 163, 163, 0.5);
+}
+
+.contact input:focus,
+.contact textarea:focus {
+  outline: none;
+  border-color: rgba(255, 192, 76, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 192, 76, 0.08);
+}
+
+.contact .row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.contact .row>* {
+  flex: 1 1 220px;
+}
+
+/* Sharp-cornered buttons to match the rectangle form fields */
+.contact .btn {
+  border-radius: 0;
+}
+
+/* Send button: slowly shifting multi-color gradient */
+.contact .gradient-btn {
+  color: #000;
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c);
+  background-size: 300% 100%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.contact .gradient-btn:hover {
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(255, 192, 76, 0.2);
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact .gradient-btn {
+    animation: none;
+  }
+}
+
+.contact small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (min-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 0.85fr 1.15fr;
+    align-items: start;
+    gap: 56px;
+  }
+}

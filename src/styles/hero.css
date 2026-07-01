@@ -1,0 +1,214 @@
+/* --- HERO --- */
+.hero {
+  margin-top: 63px;
+  /* offset fixed nav */
+  min-height: calc(100vh - 63px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* No bottom padding: the marquee sits flush against the bottom border so its
+     symmetric 28px top/bottom padding centers the icons between the two lines. */
+  padding: 40px 0 0;
+  background: var(--page-bg);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+/* --- HERO LIQUID WAVE BACKDROP --- */
+/* Flowing vertical amber wave lines behind the hero row only (sits inside the
+   container, so it's strictly between the top and the divider — never reaches
+   the marquee). Overshoots right to the frame; clipped by .page-frame overflow.
+   Fades to transparent on the LEFT so there are no waves behind the text. */
+.hero-waves {
+  position: absolute;
+  /* top: -40px counteracts the hero's 40px padding-top so the lines reach up to
+     the nav border; bottom: 0 ends them exactly at the divider. */
+  top: -40px;
+  bottom: 0;
+  left: 0;
+  right: -340px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Fade ONLY on the left (no fade top/bottom — lines run to the borders) */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 40%, #000 66%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 30%, #000 66%);
+}
+
+.hero-waves svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave {
+  fill: none;
+  /* stroke: var(--accent); */
+  stroke: var(--accent);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.3;
+  will-change: transform;
+  animation-name: wave-flow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes wave-flow {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-300px);
+  }
+}
+
+/* Keep hero content above the wave backdrop */
+.hero-text,
+.hero-figure {
+  position: relative;
+  z-index: 1;
+}
+
+.hero .container {
+  width: 100%;
+  flex: 1 1 auto;
+  padding: 24px 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+}
+
+/* Text column keeps the original left-aligned stacked layout */
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+  /* Sit above the color-band backdrop */
+  position: relative;
+  z-index: 1;
+}
+
+/* Headshot lives in the empty right space. Sized by height (bounded) with a
+   small max-width so it can never push or move the hero text. */
+.hero-figure {
+  /* Bottom-align so the headshot sits on the divider line; the negative
+     margin cancels the container's 24px bottom padding so it touches exactly. */
+  align-self: flex-end;
+  margin: 0 0 -24px;
+  flex-shrink: 0;
+  max-width: 40%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* Sit above the color-band backdrop */
+  position: relative;
+  z-index: 1;
+}
+
+.hero-img {
+  position: relative;
+  z-index: 1;
+  height: clamp(320px, 65vh, 520px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Only show the headshot where there's clearly room beside the title (so the
+   "Hi, I'm <Bidhan>" line never has to wrap). Below this the text goes
+   full-width and the title fits on one line on its own. */
+@media (max-width: 1199px) {
+  .hero-figure {
+    display: none;
+  }
+}
+
+/* On tall viewports (large monitors), don't stretch the hero to the full
+   screen — size it to its content so the page isn't mostly empty and the
+   next section is visible. Shorter screens keep the full-height landing look. */
+@media (min-height: 900px) {
+  .hero {
+    min-height: auto;
+  }
+}
+
+.hero .container h1 {
+  font-size: 84px;
+  line-height: 1.03;
+  font-weight: 800;
+  letter-spacing: -2.5px;
+  margin: 0 0 20px;
+  color: var(--text);
+  max-width: 760px;
+}
+
+/* Highlight key word in hero heading with primary amber */
+.hero .container h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+/* Typewriter caret after the hero title */
+.hero .container h1 .caret {
+  color: var(--accent);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+/* Steady while typing, blinks once typing finishes */
+.hero .container h1 .caret.blink {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 500;
+  max-width: 560px;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+/* Highlighted phrases inside body text */
+.hl {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.hero .cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Section headings (outside hero) */
+.container h1,
+.container h2 {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin: 0 0 8px;
+  color: #ffffff;
+}
+
+/* Subtitle text under each section heading */
+.section>.container>p {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0 0 4px;
+  line-height: 1.6;
+}

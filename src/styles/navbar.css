@@ -1,0 +1,148 @@
+/* --- TOP NAVIGATION --- */
+/*
+  Nav is inset 1px past the page-frame border so the menu background
+  doesn't cover it. The same page-frame border shows at equal opacity
+  through both the nav area and all sections below — no double-stacking.
+*/
+.nav {
+  position: fixed;
+  top: 0;
+  left: var(--frame-inset);
+  right: var(--frame-inset);
+  z-index: 1000;
+  height: 63px;
+}
+
+.nav .menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 63px;
+  width: 100%;
+}
+
+.nav .links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.nav button,
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: inherit;
+  letter-spacing: 0;
+}
+
+/* Nav item icons — hidden on desktop, shown in the mobile slide-in panel */
+.nav-icon {
+  display: none;
+}
+
+/* Mobile slide-in backdrop — only visible on mobile when menu is open */
+.nav-backdrop {
+  display: none;
+}
+
+.nav a:hover,
+.nav button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav .brand {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  /* Animated gradient text (same color cycle as the Send button) */
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.nav .brand:hover {
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/*
+  NOTE: this reduced-motion block also resets `.wave` (defined in hero.css).
+  It is intentionally kept here — before hero.css in import order — to preserve
+  the original cascade order from the single index.css file.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .nav .brand {
+    animation: none;
+  }
+
+  .wave {
+    animation: none;
+  }
+}
+
+/* --- HAMBURGER --- */
+.nav .hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 1.6rem;
+  height: 1.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger:focus {
+  outline: none;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 2px;
+  background: var(--muted);
+  border-radius: 2px;
+}

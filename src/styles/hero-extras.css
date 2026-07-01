@@ -1,0 +1,115 @@
+/*
+  Lower hero band: language cards, social links, and the tech marquee strip.
+  Kept as its own file; these all belong to the Hero component.
+*/
+
+/* --- LANGUAGES --- */
+.languages {
+  display: flex;
+  gap: 14px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+
+.lang-card {
+  width: 120px;
+  height: 120px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.lang-card:hover {
+  border-color: rgba(255, 192, 76, 0.35);
+  background: var(--card-alt);
+}
+
+.lang-card img {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 10px;
+}
+
+.lang-card span {
+  display: block;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* --- SOCIAL LINKS (hero) --- */
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  margin-top: 40px;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 23px;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.social-link:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* --- TECH MARQUEE (hero bottom strip) --- */
+/* Full-width line above the marquee (sits just below where the headshot ends).
+   Kept separate from .tech-marquee so the marquee's edge-fade mask doesn't
+   fade the line's ends — it runs solid all the way to the frame borders. */
+.hero-divider {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tech-marquee {
+  width: 100%;
+  overflow: hidden;
+  padding: 28px 0;
+  /* Fade icons out toward the frame borders instead of a hard cut */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Motion is driven by requestAnimationFrame in Hero.jsx so the speed can
+   ease smoothly between fast and slow on hover (no animation-duration jump). */
+.tech-track {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  width: max-content;
+  will-change: transform;
+}
+
+.tech-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 40px;
+  padding: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.25s ease, color 0.25s ease, filter 0.25s ease;
+}
+
+/* Let the whole icon box catch hover, not just the painted glyph pixels */
+.tech-icon svg {
+  display: block;
+  pointer-events: none;
+}
+
+/* Hovered icon glows amber and enlarges */
+.tech-icon:hover {
+  color: var(--accent);
+  transform: scale(1.55);
+  filter: drop-shadow(0 0 10px rgba(255, 192, 76, 0.65));
+}

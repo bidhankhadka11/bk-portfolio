@@ -1,0 +1,181 @@
+/* --- CARDS (projects, experience, skills) --- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- PROJECTS --- */
+/* Cards tile into one block. The grid's whitish background shows through the
+   1px gaps as uniform dividers, and the 1px outer border closes the rectangle —
+   so every line is exactly 1px, with no doubling where cards meet. */
+.projects .grid {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(2, 1fr);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  margin-top: 28px;
+}
+
+/* Vertical project card: large image on top, details below. */
+.projects .card {
+  position: relative;
+  border-radius: 0;
+  border: none;
+  background: var(--card);
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+  padding: 0 0 18px;
+  overflow: hidden;
+  transition: background 0.15s ease;
+}
+
+.projects .card:hover {
+  background: var(--card-alt);
+}
+
+/* Animated gradient inner border on hover (same color cycle as the Send button) */
+.projects .card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 4px solid transparent;
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c) border-box;
+  background-size: 300% 100%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.projects .card:hover::after {
+  opacity: 1;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects .card:hover::after {
+    animation: none;
+  }
+}
+
+/* Fixed-size frame that clips the zoom so the image enlarges "inside" it */
+.project-media {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.project-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  border-radius: 0;
+  display: block;
+  border: none;
+  transition: transform 0.4s ease;
+}
+
+/* Zoom the image (clipped within its frame) when hovering the whole card */
+.projects .card:hover .project-img {
+  transform: scale(1.08);
+}
+
+.projects .card-body {
+  flex: 1;
+  min-width: 0;
+  padding: 25px 25px 10px;
+}
+
+.projects h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  transition: color 0.15s ease;
+}
+
+.projects .card:hover h3 {
+  color: var(--accent);
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  margin: 34px 4px 0 0;
+  letter-spacing: 0.01em;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* Lighten the tech tags on hover */
+.projects .tag:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text);
+}
+
+.projects .links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.projects .links a {
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 192, 76, 0.25);
+  background: rgba(255, 192, 76, 0.06);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.projects .links a:hover {
+  background: rgba(255, 192, 76, 0.12);
+  border-color: rgba(255, 192, 76, 0.5);
+}

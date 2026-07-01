@@ -1,0 +1,139 @@
+/* --- EXPERIENCE (horizontal boxes) --- */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 28px;
+}
+
+/* One experience per row: details on the left, date/location on the right */
+.exp-card {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
+  padding: 34px 38px;
+  overflow: hidden;
+  transition: background 0.15s ease;
+}
+
+/* Collapse shared edges so stacked boxes read as a single block */
+.exp-card:not(:first-child) {
+  margin-top: -1px;
+}
+
+.exp-card:hover {
+  background: var(--card-alt);
+}
+
+/* Animated gradient inner border on hover (same as project cards) */
+.exp-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 4px solid transparent;
+  background: linear-gradient(90deg,
+      #ffc04c,
+      #ff8a3c,
+      #ff5f8f,
+      #a855f7,
+      #4cb8ff,
+      #ffc04c) border-box;
+  background-size: 300% 100%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.exp-card:hover::after {
+  opacity: 1;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.exp-main {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.exp-role {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.exp-org {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.exp-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: right;
+}
+
+.exp-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.exp-meta svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.exp-card .exp-desc {
+  margin: 12px 0 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exp-card:hover::after {
+    animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .exp-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .exp-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    text-align: left;
+  }
+}
