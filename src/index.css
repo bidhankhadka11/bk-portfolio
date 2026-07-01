@@ -1120,6 +1120,7 @@ footer {
 @media (max-width: 1024px) {
   :root {
     --frame-margin: 24px;
+    --frame-inset: 25px;
   }
 }
 
@@ -1127,6 +1128,7 @@ footer {
 @media (max-width: 768px) {
   :root {
     --frame-margin: 10px;
+    --frame-inset: 11px;
   }
 
   .section {
@@ -1318,6 +1320,7 @@ footer {
 @media (max-width: 480px) {
   :root {
     --frame-margin: 4px;
+    --frame-inset: 5px;
   }
 
   .hero .container h1 {
