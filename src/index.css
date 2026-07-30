@@ -8,6 +8,7 @@
 @import './styles/hero.css';         /* whoami hero + phosphor portrait */
 @import './styles/buttons.css';      /* shared .btn */
 @import './styles/projects.css';     /* file-window project cards */
+@import './styles/project-modal.css';/* tmux-split project detail window */
 @import './styles/experience.css';   /* experience log */
 @import './styles/contact.css';      /* contact prompt form */
 @import './styles/footer.css';       /* shutdown echo footer */

@@ -28,6 +28,26 @@
   }
 }
 
+/* Project modal — stack the tmux panes vertically (same as mockup 13) */
+@media (max-width: 900px) {
+  .pm-panes {
+    flex-direction: column;
+  }
+
+  .pm-pane-img {
+    flex: 1.2;
+    margin: 6px 6px 3px 6px;
+  }
+
+  .pm-pane-doc {
+    margin: 3px 6px 6px 6px;
+  }
+
+  .pm-status .right .hint {
+    display: none;
+  }
+}
+
 /* Small phone — inline nav links overflow, switch to hamburger */
 @media (max-width: 640px) {
   .nav .hamburger {

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 12 — Project Window: feh Viewer (filmstrip)</title>
+<style>
+  :root {
+    --bg: #050805;
+    --panel: #0a120c;
+    --panel-2: #0d1810;
+    --green: #4af26c;
+    --green-dim: #2c9648;
+    --green-faint: rgba(74, 242, 108, 0.14);
+    --amber: #ffc04c;
+    --text: #b8e6c4;
+    --muted: #6f9b7c;
+    --border: rgba(74, 242, 108, 0.28);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", Consolas, monospace;
+    background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--green); color: #000; }
+
+  /* CRT overlay */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 999; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 3px);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 998; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 10, 2, 0.55) 100%);
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker { 0%,100% { opacity: 1; } 92% { opacity: 1; } 93% { opacity: 0.86; } 94% { opacity: 1; } 97% { opacity: 0.93; } }
+
+  .container { max-width: 1060px; margin: 0 auto; padding: 0 1.5rem; }
+  .section { padding: 60px 0 90px; }
+  .sec-cmd { color: var(--muted); margin-bottom: 8px; }
+  .sec-cmd .u { color: var(--green); } .sec-cmd .h { color: var(--amber); } .sec-cmd .cmd { color: var(--text); }
+  .sec-note { color: var(--muted); font-size: 13px; margin-bottom: 26px; }
+  .sec-note::before { content: "# "; color: var(--green-dim); }
+
+  /* Projects grid */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .pcard { background: var(--panel); border: 1px solid var(--border); transition: all .2s; display: flex; flex-direction: column; cursor: pointer; }
+  .pcard:hover { border-color: var(--green); box-shadow: 0 0 22px rgba(74, 242, 108, 0.18); }
+  .pcard .bar {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    background: var(--panel-2); border-bottom: 1px solid var(--border);
+    color: var(--muted); font-size: 12px;
+  }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; }
+  .dots i:nth-child(1) { background: #ff5f56; } .dots i:nth-child(2) { background: #ffbd2e; } .dots i:nth-child(3) { background: #27c93f; }
+  .pmedia { height: 210px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+  .pmedia img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block;
+    filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.4) brightness(0.82) contrast(1.05);
+    transition: filter .35s ease, transform .35s ease;
+  }
+  .pcard:hover .pmedia img { filter: none; transform: scale(1.04); }
+  .pmedia::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0 1px, transparent 1px 3px);
+  }
+  .pmedia .count {
+    position: absolute; right: 8px; bottom: 8px; z-index: 2;
+    background: rgba(5, 8, 5, 0.85); border: 1px solid var(--border);
+    color: var(--green); font-size: 11px; padding: 1px 8px;
+  }
+  .pbody { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+  .pbody h3 { font-size: 15px; color: #eafff0; font-weight: 700; margin-bottom: 6px; }
+  .pbody h3::before { content: "> "; color: var(--green); }
+  .pcard:hover h3 { color: var(--green); text-shadow: 0 0 8px rgba(74,242,108,0.5); }
+  .pbody p { color: var(--muted); font-size: 12.5px; flex: 1; }
+  .pbody .open-hint { margin-top: 12px; color: var(--green-dim); font-size: 11.5px; }
+  .pcard:hover .open-hint { color: var(--amber); }
+
+  /* ============ MODAL — feh image viewer window ============ */
+  .overlay {
+    position: fixed; inset: 0; z-index: 500; display: none;
+    background: rgba(2, 5, 2, 0.82); backdrop-filter: blur(3px);
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .overlay.on { display: flex; }
+  .modal {
+    width: min(980px, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    background: var(--panel); border: 1px solid var(--green);
+    box-shadow: 0 0 60px rgba(74, 242, 108, 0.25), 0 0 0 1px rgba(0,0,0,0.6);
+    transform-origin: center;
+  }
+  .overlay.on .modal { animation: crt-on .32s cubic-bezier(.2,.9,.3,1.2); }
+  @keyframes crt-on {
+    0%   { transform: scaleY(0.005) scaleX(0.6); filter: brightness(6); }
+    55%  { transform: scaleY(1.03) scaleX(0.99); filter: brightness(1.6); }
+    100% { transform: scale(1); filter: brightness(1); }
+  }
+  .modal .mbar {
+    display: flex; align-items: center; gap: 12px; padding: 9px 14px;
+    background: var(--panel-2); border-bottom: 1px solid var(--border);
+    color: var(--muted); font-size: 12.5px; flex-shrink: 0;
+  }
+  .modal .mbar .dots i { width: 10px; height: 10px; }
+  .modal .mbar .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .modal .mbar .title b { color: var(--green); font-weight: 400; }
+  .modal .mbar .close {
+    margin-left: auto; cursor: pointer; color: var(--muted); border: 1px solid var(--border);
+    padding: 1px 9px; font-size: 12px; transition: all .15s; flex-shrink: 0;
+  }
+  .modal .mbar .close:hover { color: #ff5f56; border-color: #ff5f56; background: rgba(255,95,86,0.08); }
+
+  .mscroll { overflow-y: auto; }
+  .mscroll::-webkit-scrollbar { width: 10px; }
+  .mscroll::-webkit-scrollbar-thumb { background: var(--green-dim); border: 2px solid var(--panel); }
+  .mscroll::-webkit-scrollbar-track { background: var(--panel-2); }
+
+  /* Viewer */
+  .viewer { position: relative; background: #030503; border-bottom: 1px solid var(--border); }
+  .viewer .stage { height: min(52vh, 460px); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .viewer .stage img { max-width: 100%; max-height: 100%; display: block; }
+  .viewer .stage.tinted img { filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.4) brightness(0.82) contrast(1.05); }
+  .viewer .stage::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.13) 0 1px, transparent 1px 3px);
+  }
+  .viewer .stage img { animation: img-in .18s ease; }
+  @keyframes img-in { 0% { opacity: 0; transform: translateX(6px); } 100% { opacity: 1; transform: none; } }
+  .navbtn {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+    background: rgba(5, 8, 5, 0.85); color: var(--green); border: 1px solid var(--border);
+    font-family: inherit; font-size: 20px; line-height: 1; padding: 14px 12px; cursor: pointer;
+    transition: all .15s; user-select: none;
+  }
+  .navbtn:hover { border-color: var(--green); box-shadow: 0 0 14px rgba(74,242,108,0.35); background: rgba(10, 18, 12, 0.95); }
+  .navbtn.prev { left: 12px; } .navbtn.next { right: 12px; }
+  .navbtn[disabled] { opacity: 0.25; cursor: default; box-shadow: none; border-color: var(--border); }
+
+  /* Caption strip under image */
+  .capbar {
+    display: flex; align-items: center; gap: 14px; padding: 8px 14px;
+    background: var(--panel-2); border-bottom: 1px solid var(--border); font-size: 12.5px;
+  }
+  .capbar .idx { color: var(--amber); flex-shrink: 0; }
+  .capbar .cap { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .capbar .cap::before { content: "# "; color: var(--green-dim); }
+  .capbar .tint {
+    margin-left: auto; cursor: pointer; color: var(--muted); font-size: 11.5px;
+    border: 1px solid var(--border); padding: 0 8px; flex-shrink: 0; user-select: none;
+  }
+  .capbar .tint:hover { color: var(--green); border-color: var(--green); }
+  .capbar .tint b { color: var(--green); font-weight: 400; }
+
+  /* Filmstrip */
+  .strip { display: flex; gap: 10px; padding: 12px 14px; background: var(--panel); overflow-x: auto; border-bottom: 1px dashed var(--border); }
+  .strip::-webkit-scrollbar { height: 8px; }
+  .strip::-webkit-scrollbar-thumb { background: var(--green-dim); }
+  .strip .th {
+    flex-shrink: 0; width: 132px; height: 76px; cursor: pointer; position: relative;
+    border: 1px solid var(--border); overflow: hidden; opacity: 0.55; transition: all .18s;
+  }
+  .strip .th img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block;
+    filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.4) brightness(0.82);
+  }
+  .strip .th:hover { opacity: 0.9; }
+  .strip .th.active { opacity: 1; border-color: var(--amber); box-shadow: 0 0 10px rgba(255,192,76,0.35); }
+  .strip .th.active img { filter: none; }
+  .strip .th .n {
+    position: absolute; left: 4px; top: 3px; font-size: 10px; color: var(--green);
+    background: rgba(5,8,5,0.8); padding: 0 5px; border: 1px solid var(--border);
+  }
+
+  /* About block */
+  .about { padding: 22px 26px 26px; }
+  .about .cmdline { color: var(--muted); margin-bottom: 14px; }
+  .about .cmdline .u { color: var(--green); } .about .cmdline .h { color: var(--amber); } .about .cmdline .cmd { color: var(--text); }
+  .about h2 { color: #eafff0; font-size: 19px; margin-bottom: 4px; }
+  .about h2::before { content: "> "; color: var(--green); }
+  .about .sub { color: var(--green-dim); font-size: 12px; margin-bottom: 14px; }
+  .about p { color: var(--muted); font-size: 13px; margin-bottom: 12px; max-width: 70ch; }
+  .about ul { list-style: none; margin: 4px 0 16px; }
+  .about ul li { color: var(--muted); font-size: 12.5px; padding: 2px 0; }
+  .about ul li::before { content: "[x] "; color: var(--green); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 16px; }
+  .tag { font-size: 11px; color: var(--green); border: 1px solid var(--border); padding: 1px 8px; background: rgba(74, 242, 108, 0.05); }
+  .tag::before { content: "["; color: var(--green-dim); } .tag::after { content: "]"; color: var(--green-dim); }
+  .plinks a { color: var(--amber); font-size: 13px; border-bottom: 1px dashed rgba(255, 192, 76, 0.5); margin-right: 18px; }
+  .plinks a::before { content: "↗ "; }
+  .plinks a:hover { color: #ffd685; border-bottom-style: solid; }
+
+  /* Keybind footer */
+  .keys {
+    display: flex; gap: 20px; flex-wrap: wrap; padding: 8px 14px; flex-shrink: 0;
+    border-top: 1px solid var(--border); background: var(--panel-2);
+    color: var(--muted); font-size: 11.5px;
+  }
+  .keys b { color: var(--green); font-weight: 400; border: 1px solid var(--border); padding: 0 5px; margin-right: 5px; }
+</style>
+</head>
+<body>
+
+<section class="section">
+  <div class="container">
+    <div class="sec-cmd"><span class="u">bidhan@uta</span>:<span class="h">~/portfolio</span>$ <span class="cmd">ls -la ./projects/</span></div>
+    <p class="sec-note">mockup 12 · click any project → it opens as a feh image-viewer window. filmstrip + ←/→ scroll through multiple screenshots. CRT power-on animation.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="mbar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="title" id="mtitle"></span>
+      <span class="close" id="mclose">[x] close</span>
+    </div>
+    <div class="mscroll">
+      <div class="viewer">
+        <div class="stage" id="stage"><img id="mimg" src="" alt="" /></div>
+        <button class="navbtn prev" id="prev" aria-label="previous">&lsaquo;</button>
+        <button class="navbtn next" id="next" aria-label="next">&rsaquo;</button>
+        <div class="capbar">
+          <span class="idx" id="midx"></span>
+          <span class="cap" id="mcap"></span>
+          <span class="tint" id="tintbtn">tint: <b>off</b></span>
+        </div>
+        <div class="strip" id="strip"></div>
+      </div>
+      <div class="about">
+        <div class="cmdline"><span class="u">bidhan@uta</span>:<span class="h" id="mpath"></span>$ <span class="cmd">cat ABOUT.md</span></div>
+        <h2 id="mname"></h2>
+        <div class="sub" id="msub"></div>
+        <div id="mdesc"></div>
+        <div class="tags" id="mtags"></div>
+        <div class="plinks" id="mlinks"></div>
+      </div>
+    </div>
+    <div class="keys">
+      <span><b>←</b><b>→</b>screenshots</span>
+      <span><b>t</b>toggle phosphor tint</span>
+      <span><b>esc</b>close window</span>
+      <span><b>click outside</b>close</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const A = "../public/assets/";
+const projects = [
+  {
+    name: "StudyMate", slug: "studymate", stack: ["FastAPI","LangChain","pgvector","React 19"],
+    short: "A retrieval augmented study assistant over your own PDFs. Answers are grounded in retrieved chunks and cited to filename and page, and questions the corpus can't answer get a refusal, not a hallucination.",
+    sub: "RAG study assistant · 4 screenshots",
+    long: [
+      "Upload your coursework PDFs and ask questions. Documents are chunked into per-document pgvector collections, so queries can be scoped to any subset — and every answer is grounded in retrieved text and cited back to filename and page. Questions the corpus doesn't answer return an honest refusal instead of a hallucination.",
+    ],
+    features: [
+      "Grounded Q&A — every claim cited to filename, page N",
+      "\"Explain like I'm a beginner\" — plain-language, analogy-driven mode",
+      "Flashcard generation with a flip-card review UI",
+      "LLM-graded quizzes with partial credit and per-answer explanations",
+      "Measured economics: RAG made querying a 634-page book ~240× cheaper",
+      "Retrieval eval: 52 hand-verified questions, recall@6 = 0.92",
+    ],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/StudyMate" }],
+    images: [
+      { src: A+"studymate.png",            cap: "chat.png — grounded answers with per-page citations" },
+      { src: A+"studymate-explain.png",    cap: "explain.png — beginner mode, analogy-driven and still grounded" },
+      { src: A+"studymate-flashcards.png", cap: "flashcards.png — generated from the document, click to flip" },
+      { src: A+"studymate-quiz.png",       cap: "quiz.png — LLM-graded with partial credit + explanations" },
+    ],
+  },
+  {
+    name: "Production LangGraph API", slug: "langgraph-api", stack: ["FastAPI","LangGraph","Docker","LangSmith"],
+    short: "A production grade LLM chat API. A single POST /chat endpoint wrapped in prompt-injection blocking, PII masking, response caching, rate limiting, and cross-provider model fallback. 61 tests at 100% coverage.",
+    sub: "production LLM service · live on Render",
+    long: [
+      "What it takes to run a language-model service in production, not just call an LLM in a notebook. Every request flows through a pipeline: security check → cache lookup → LangGraph agent → output validation → cache store → metrics.",
+    ],
+    features: [
+      "Prompt-injection blocking + PII masking on the way in and out",
+      "Cross-provider fallback: OpenAI primary → Claude Haiku on failure",
+      "SHA-256-keyed TTL response cache and per-client rate limiting",
+      "Structured JSON logs, live /metrics, full LangSmith tracing",
+      "61 tests, 100% line coverage — offline, deterministic FakeLLM",
+      "Dockerized, non-root, healthchecked; auto-deploys to Render",
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/bidhankhadka11/langgraph-api" },
+      { label: "Live API", href: "https://langgraph-api-dkzi.onrender.com/docs" },
+    ],
+    images: [{ src: A+"langgraph-api.png", cap: "docs.png — Swagger UI of the live deployed API" }],
+  },
+  {
+    name: "Rarify", slug: "rarify", stack: ["Kotlin","Compose","Material 3","SQLite"],
+    short: "A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles.",
+    sub: "native Android marketplace",
+    long: [
+      "A native Android marketplace for rare collectibles where a single account switches between buyer, seller, and admin roles. Built with Jetpack Compose and Material 3, with admin moderation flows and persisted themes.",
+    ],
+    features: ["Single-account role switching: buyer / seller / admin", "Admin moderation of listings", "Material 3 theming, persisted across sessions", "Local persistence with SQLite"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/rarify-marketplace" }],
+    images: [{ src: A+"rarify.png", cap: "rarify.png — marketplace home" }],
+  },
+  {
+    name: "Software Defect Classifier", slug: "defect-classifier", stack: ["Python","sklearn","pandas","RF-200"],
+    short: "A Kaggle binary-classification project that predicts whether a C code module contains a defect from its complexity metrics.",
+    sub: "Kaggle binary classification",
+    long: [
+      "Predicts whether a C module contains a defect from its complexity metrics. A class-balanced 200-tree Random Forest behind a RobustScaler reaches ~0.79 ROC-AUC on the validation split.",
+    ],
+    features: ["Class-balanced Random Forest (200 trees)", "RobustScaler preprocessing", "~0.79 ROC-AUC on validation"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/binaryclassification" }],
+    images: [{ src: A+"binaryclassification.png", cap: "notebook.png — feature exploration" }],
+  },
+  {
+    name: "FitJournal", slug: "fitjournal", stack: ["React","Node","Express","MongoDB"],
+    short: "A full-stack MERN fitness tracker for logging workouts by exercise, reps, and weight.",
+    sub: "full-stack MERN tracker",
+    long: [
+      "A MERN fitness tracker for logging workouts by exercise, reps, and weight. Complete CRUD over a REST API with global state via React Context and Hooks, backed by MongoDB + Mongoose.",
+    ],
+    features: ["Full CRUD over a REST API", "Global state with Context + Hooks", "MongoDB + Mongoose persistence"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }],
+    images: [{ src: A+"fitjournal.png", cap: "fitjournal.png — workout log" }],
+  },
+  {
+    name: "PersonaAI", slug: "persona-ai", stack: ["React","Express","Gemini API"],
+    short: "A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth.",
+    sub: "conversational AI chatbot",
+    long: [
+      "A chatbot powered by Google's Gemini API with selectable personalities — Neko, Shadow, Sloth. React frontend talking to an Express /chat endpoint; real-time replies with full conversation history.",
+    ],
+    features: ["Selectable personality system prompts", "React → Express /chat endpoint", "Full conversation history"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/AI-Chatbot" }],
+    images: [{ src: A+"persona.png", cap: "persona.png — chat with Neko" }],
+  },
+  {
+    name: "Genetic Algorithm", slug: "genetic-algorithm", stack: ["Java","OOP"],
+    short: "A Java genetic algorithm that evolves a population of random character strings toward a target phrase.",
+    sub: "evolutionary computation in Java",
+    long: [
+      "Evolves a population of random character strings toward a target phrase. Elitist selection, single-point crossover, and rate-based mutation in a clean object-oriented design.",
+    ],
+    features: ["Elitist selection", "Single-point crossover", "Rate-based mutation"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Genetic-Algorithm" }],
+    images: [{ src: A+"genetic.png", cap: "genetic.png — generations converging" }],
+  },
+  {
+    name: "Event-Driven Game", slug: "flappy-swing", stack: ["Java","Swing"],
+    short: "A Java Swing recreation of Flappy Bird with custom-rendered sprites and scrolling background.",
+    sub: "Java Swing game",
+    long: [
+      "A Swing recreation of Flappy Bird with custom-rendered sprites and a scrolling background. Swing Timer game loop, KeyListener input, real-time collision detection, live score, instant restart.",
+    ],
+    features: ["Swing Timer game loop", "Real-time collision detection", "Live score + instant restart"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Flappy-Bird-on-java" }],
+    images: [{ src: A+"flappy.png", cap: "flappy.png — mid-flight" }],
+  },
+];
+
+/* ---- grid ---- */
+const grid = document.getElementById("grid");
+projects.forEach((p, i) => {
+  const el = document.createElement("article");
+  el.className = "pcard";
+  el.innerHTML = `
+    <div class="bar"><div class="dots"><i></i><i></i><i></i></div>~/projects/${p.slug}</div>
+    <div class="pmedia"><img src="${p.images[0].src}" alt="${p.name}" />
+      ${p.images.length > 1 ? `<span class="count">${p.images.length} imgs</span>` : ""}
+    </div>
+    <div class="pbody">
+      <h3>${p.name}</h3><p>${p.short}</p>
+      <div class="open-hint">$ open ${p.slug} --viewer &nbsp;⏎</div>
+    </div>`;
+  el.addEventListener("click", () => openModal(i));
+  grid.appendChild(el);
+});
+
+/* ---- modal ---- */
+const overlay = document.getElementById("overlay");
+const stage = document.getElementById("stage");
+let cur = 0, imgIdx = 0, tinted = false;
+
+function openModal(i) {
+  cur = i; imgIdx = 0;
+  const p = projects[i];
+  document.getElementById("mtitle").innerHTML =
+    `bidhan@uta: <b>feh ~/projects/${p.slug}/screenshots</b>`;
+  document.getElementById("mpath").textContent = `~/projects/${p.slug}`;
+  document.getElementById("mname").textContent = p.name;
+  document.getElementById("msub").textContent = p.sub;
+  document.getElementById("mdesc").innerHTML =
+    p.long.map(t => `<p>${t}</p>`).join("") +
+    `<ul>${p.features.map(f => `<li>${f}</li>`).join("")}</ul>`;
+  document.getElementById("mtags").innerHTML = p.stack.map(s => `<span class="tag">${s}</span>`).join("");
+  document.getElementById("mlinks").innerHTML =
+    p.links.map(l => `<a href="${l.href}" target="_blank" rel="noreferrer">${l.label}</a>`).join("");
+  const strip = document.getElementById("strip");
+  strip.style.display = p.images.length > 1 ? "flex" : "none";
+  strip.innerHTML = p.images.map((im, k) =>
+    `<div class="th" data-k="${k}"><img src="${im.src}" alt="" /><span class="n">${String(k+1).padStart(2,"0")}</span></div>`).join("");
+  strip.querySelectorAll(".th").forEach(th =>
+    th.addEventListener("click", e => { e.stopPropagation(); setImg(+th.dataset.k); }));
+  setImg(0);
+  overlay.classList.add("on");
+  document.body.style.overflow = "hidden";
+}
+function setImg(k) {
+  const p = projects[cur];
+  imgIdx = (k + p.images.length) % p.images.length;
+  const img = document.getElementById("mimg");
+  img.src = ""; // retrigger animation
+  requestAnimationFrame(() => { img.src = p.images[imgIdx].src; });
+  document.getElementById("midx").textContent = `[${imgIdx+1}/${p.images.length}]`;
+  document.getElementById("mcap").textContent = p.images[imgIdx].cap;
+  document.getElementById("prev").disabled = p.images.length < 2;
+  document.getElementById("next").disabled = p.images.length < 2;
+  document.querySelectorAll(".strip .th").forEach((t, j) => t.classList.toggle("active", j === imgIdx));
+}
+function closeModal() { overlay.classList.remove("on"); document.body.style.overflow = ""; }
+
+document.getElementById("prev").addEventListener("click", e => { e.stopPropagation(); setImg(imgIdx-1); });
+document.getElementById("next").addEventListener("click", e => { e.stopPropagation(); setImg(imgIdx+1); });
+document.getElementById("mclose").addEventListener("click", closeModal);
+overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+document.getElementById("tintbtn").addEventListener("click", () => {
+  tinted = !tinted;
+  stage.classList.toggle("tinted", tinted);
+  document.getElementById("tintbtn").innerHTML = `tint: <b>${tinted ? "on" : "off"}</b>`;
+});
+document.addEventListener("keydown", e => {
+  if (!overlay.classList.contains("on")) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowLeft") setImg(imgIdx-1);
+  if (e.key === "ArrowRight") setImg(imgIdx+1);
+  if (e.key === "t") document.getElementById("tintbtn").click();
+});
+
+/* auto-open StudyMate so the window is visible immediately */
+window.addEventListener("load", () => setTimeout(() => openModal(0), 400));
+</script>
+</body>
+</html>

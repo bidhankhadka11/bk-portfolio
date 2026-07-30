@@ -11,6 +11,7 @@
   transition: all 0.2s;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .pcard:hover {
@@ -133,4 +134,28 @@
 .plinks a:hover {
   color: #ffd685;
   border-bottom-style: solid;
+}
+
+/* Multi-screenshot badge on the card thumbnail */
+.pmedia .count {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  background: rgba(5, 8, 5, 0.85);
+  border: 1px solid var(--border);
+  color: var(--green);
+  font-size: 11px;
+  padding: 1px 8px;
+}
+
+/* "$ tmux attach" open hint at the card's foot */
+.pcard .open-hint {
+  margin-top: 12px;
+  color: var(--green-dim);
+  font-size: 11.5px;
+}
+
+.pcard:hover .open-hint {
+  color: var(--amber);
 }

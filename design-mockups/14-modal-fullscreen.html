@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 14 — Project Window: Fullscreen CRT Slideshow</title>
+<style>
+  :root {
+    --bg: #050805;
+    --panel: #0a120c;
+    --panel-2: #0d1810;
+    --green: #4af26c;
+    --green-dim: #2c9648;
+    --green-faint: rgba(74, 242, 108, 0.14);
+    --amber: #ffc04c;
+    --text: #b8e6c4;
+    --muted: #6f9b7c;
+    --border: rgba(74, 242, 108, 0.28);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", Consolas, monospace;
+    background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--green); color: #000; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 999; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 3px);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 998; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 10, 2, 0.55) 100%);
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker { 0%,100% { opacity: 1; } 92% { opacity: 1; } 93% { opacity: 0.86; } 94% { opacity: 1; } 97% { opacity: 0.93; } }
+
+  .container { max-width: 1060px; margin: 0 auto; padding: 0 1.5rem; }
+  .section { padding: 60px 0 90px; }
+  .sec-cmd { color: var(--muted); margin-bottom: 8px; }
+  .sec-cmd .u { color: var(--green); } .sec-cmd .h { color: var(--amber); } .sec-cmd .cmd { color: var(--text); }
+  .sec-note { color: var(--muted); font-size: 13px; margin-bottom: 26px; }
+  .sec-note::before { content: "# "; color: var(--green-dim); }
+
+  /* Projects grid */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .pcard { background: var(--panel); border: 1px solid var(--border); transition: all .2s; display: flex; flex-direction: column; cursor: pointer; }
+  .pcard:hover { border-color: var(--green); box-shadow: 0 0 22px rgba(74, 242, 108, 0.18); }
+  .pcard .bar {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    background: var(--panel-2); border-bottom: 1px solid var(--border);
+    color: var(--muted); font-size: 12px;
+  }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; }
+  .dots i:nth-child(1) { background: #ff5f56; } .dots i:nth-child(2) { background: #ffbd2e; } .dots i:nth-child(3) { background: #27c93f; }
+  .pmedia { height: 210px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+  .pmedia img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block;
+    filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.4) brightness(0.82) contrast(1.05);
+    transition: filter .35s ease, transform .35s ease;
+  }
+  .pcard:hover .pmedia img { filter: none; transform: scale(1.04); }
+  .pmedia::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0 1px, transparent 1px 3px);
+  }
+  .pmedia .count {
+    position: absolute; right: 8px; bottom: 8px; z-index: 2;
+    background: rgba(5, 8, 5, 0.85); border: 1px solid var(--border);
+    color: var(--green); font-size: 11px; padding: 1px 8px;
+  }
+  .pbody { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+  .pbody h3 { font-size: 15px; color: #eafff0; font-weight: 700; margin-bottom: 6px; }
+  .pbody h3::before { content: "> "; color: var(--green); }
+  .pcard:hover h3 { color: var(--green); text-shadow: 0 0 8px rgba(74,242,108,0.5); }
+  .pbody p { color: var(--muted); font-size: 12.5px; flex: 1; }
+  .pbody .open-hint { margin-top: 12px; color: var(--green-dim); font-size: 11.5px; }
+  .pcard:hover .open-hint { color: var(--amber); }
+
+  /* ============ FULLSCREEN SLIDESHOW ============ */
+  .show {
+    position: fixed; inset: 0; z-index: 500; display: none; flex-direction: column;
+    background: #020402;
+  }
+  .show.on { display: flex; animation: crt-on .35s cubic-bezier(.2,.9,.3,1.15); }
+  @keyframes crt-on {
+    0%   { transform: scaleY(0.004); filter: brightness(8); }
+    60%  { transform: scaleY(1.02); filter: brightness(1.8); }
+    100% { transform: none; filter: none; }
+  }
+
+  .topbar {
+    flex-shrink: 0; display: flex; align-items: center; gap: 18px;
+    padding: 10px 18px; border-bottom: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; background: rgba(5, 10, 6, 0.9);
+  }
+  .topbar .cmd { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar .cmd .u { color: var(--green); } .topbar .cmd .app { color: var(--amber); }
+  .topbar .exit {
+    margin-left: auto; cursor: pointer; flex-shrink: 0;
+    border: 1px solid var(--border); padding: 2px 10px; transition: all .15s;
+  }
+  .topbar .exit b { color: var(--green); font-weight: 400; }
+  .topbar .exit:hover { border-color: #ff5f56; color: #ff5f56; }
+  .topbar .exit:hover b { color: #ff5f56; }
+
+  .stagewrap { flex: 1; position: relative; min-height: 0; display: flex; flex-direction: column; }
+  .stage { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; min-height: 0; padding: 26px 90px; }
+  @media (max-width: 700px) { .stage { padding: 16px 12px 16px; } }
+  .stage img {
+    max-width: 100%; max-height: 100%; display: block;
+    border: 1px solid var(--border); box-shadow: 0 0 50px rgba(74, 242, 108, 0.12);
+  }
+  .stage img.zap { animation: zap .22s steps(3); }
+  @keyframes zap {
+    0%   { opacity: 0.2; transform: translateX(-8px) skewX(3deg); filter: brightness(3) saturate(0); }
+    60%  { opacity: 0.7; transform: translateX(4px) skewX(-2deg); filter: brightness(1.6); }
+    100% { opacity: 1; transform: none; filter: none; }
+  }
+
+  /* click zones */
+  .zone { position: absolute; top: 0; bottom: 0; width: 20%; z-index: 5; cursor: pointer; display: flex; align-items: center; }
+  .zone.l { left: 0; justify-content: flex-start; padding-left: 22px; }
+  .zone.r { right: 0; justify-content: flex-end; padding-right: 22px; }
+  .zone span {
+    font-size: 44px; color: var(--green); opacity: 0; transition: opacity .18s;
+    text-shadow: 0 0 18px rgba(74,242,108,0.8); user-select: none;
+  }
+  .zone:hover span { opacity: 1; }
+  .zone.off { display: none; }
+
+  /* caption + progress */
+  .capline {
+    flex-shrink: 0; text-align: center; padding: 4px 20px 2px;
+    color: var(--text); font-size: 13.5px; min-height: 26px;
+  }
+  .capline::after { content: "█"; color: var(--green); animation: blink 1s steps(1) infinite; margin-left: 3px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .progress { flex-shrink: 0; text-align: center; padding: 2px 0 10px; color: var(--green-dim); font-size: 15px; letter-spacing: 4px; }
+  .progress b { cursor: pointer; font-weight: 400; color: var(--green-dim); }
+  .progress b.cur { color: var(--green); text-shadow: 0 0 10px rgba(74,242,108,0.8); }
+  .progress b:hover { color: var(--amber); }
+
+  /* bottom drawer */
+  .drawer { flex-shrink: 0; border-top: 1px solid var(--border); background: rgba(6, 12, 8, 0.96); }
+  .drawer .toggle {
+    display: flex; align-items: center; gap: 10px; padding: 8px 18px; cursor: pointer;
+    color: var(--muted); font-size: 12.5px; user-select: none;
+  }
+  .drawer .toggle:hover { color: var(--green); }
+  .drawer .toggle .u { color: var(--green); } .drawer .toggle .h { color: var(--amber); }
+  .drawer .toggle .st { margin-left: auto; border: 1px solid var(--border); padding: 0 8px; }
+  .drawer .body {
+    max-height: 0; overflow: hidden; transition: max-height .3s ease;
+  }
+  .drawer.open .body { max-height: min(38vh, 340px); overflow-y: auto; }
+  .drawer .body::-webkit-scrollbar { width: 10px; }
+  .drawer .body::-webkit-scrollbar-thumb { background: var(--green-dim); }
+  .drawer .inner { padding: 6px 20px 22px; max-width: 900px; margin: 0 auto; }
+  .drawer h2 { color: #eafff0; font-size: 17px; margin-bottom: 2px; }
+  .drawer h2::before { content: "> "; color: var(--green); }
+  .drawer .sub { color: var(--green-dim); font-size: 12px; margin-bottom: 10px; }
+  .drawer p { color: var(--muted); font-size: 12.5px; margin-bottom: 8px; }
+  .drawer ul { list-style: none; margin-bottom: 12px; columns: 2; column-gap: 40px; }
+  @media (max-width: 700px) { .drawer ul { columns: 1; } }
+  .drawer ul li { color: var(--muted); font-size: 12.5px; padding: 1px 0; break-inside: avoid; }
+  .drawer ul li::before { content: "[x] "; color: var(--green); }
+  .tags { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-right: 24px; }
+  .tag { font-size: 11px; color: var(--green); border: 1px solid var(--border); padding: 1px 8px; background: rgba(74, 242, 108, 0.05); }
+  .tag::before { content: "["; color: var(--green-dim); } .tag::after { content: "]"; color: var(--green-dim); }
+  .plinks { display: inline-flex; gap: 16px; }
+  .plinks a { color: var(--amber); font-size: 12.5px; border-bottom: 1px dashed rgba(255, 192, 76, 0.5); }
+  .plinks a::before { content: "↗ "; }
+  .plinks a:hover { color: #ffd685; border-bottom-style: solid; }
+</style>
+</head>
+<body>
+
+<section class="section">
+  <div class="container">
+    <div class="sec-cmd"><span class="u">bidhan@uta</span>:<span class="h">~/portfolio</span>$ <span class="cmd">ls -la ./projects/</span></div>
+    <p class="sec-note">mockup 14 · click any project → the whole screen becomes a CRT slideshow. hover screen edges or use ←/→ to change channel; captions type themselves; notes.md slides up from the bottom.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<div class="show" id="show">
+  <div class="topbar">
+    <span class="cmd" id="topcmd"></span>
+    <span class="exit" id="mclose"><b>[esc]</b> exit fullscreen</span>
+  </div>
+  <div class="stagewrap">
+    <div class="stage">
+      <img id="mimg" src="" alt="" />
+      <div class="zone l" id="zl"><span>&lsaquo;</span></div>
+      <div class="zone r" id="zr"><span>&rsaquo;</span></div>
+    </div>
+    <div class="capline"><span id="mcap"></span></div>
+    <div class="progress" id="progress"></div>
+  </div>
+  <div class="drawer" id="drawer">
+    <div class="toggle" id="dtoggle">
+      <span><span class="u">bidhan@uta</span>:<span class="h" id="dpath"></span>$ cat notes.md</span>
+      <span class="st" id="dst">[+] expand</span>
+    </div>
+    <div class="body">
+      <div class="inner">
+        <h2 id="mname"></h2>
+        <div class="sub" id="msub"></div>
+        <div id="mdesc"></div>
+        <div class="tags" id="mtags"></div>
+        <div class="plinks" id="mlinks"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const A = "../public/assets/";
+const projects = [
+  {
+    name: "StudyMate", slug: "studymate", stack: ["FastAPI","LangChain","pgvector","React 19"],
+    short: "A retrieval augmented study assistant over your own PDFs. Answers are grounded in retrieved chunks and cited to filename and page, and questions the corpus can't answer get a refusal, not a hallucination.",
+    sub: "RAG study assistant",
+    long: [
+      "Upload your coursework PDFs and ask questions. Documents are chunked into per-document pgvector collections, so queries can be scoped to any subset — every answer is grounded in retrieved text and cited back to filename and page. Questions the corpus doesn't answer return an honest refusal instead of a hallucination.",
+    ],
+    features: [
+      "Grounded Q&A cited to filename, page N",
+      "\"Explain like I'm a beginner\" mode",
+      "Flashcards with flip-card review",
+      "LLM-graded quizzes, partial credit",
+      "634-page book ~240× cheaper via RAG",
+      "Eval: 52 questions, recall@6 = 0.92",
+    ],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/StudyMate" }],
+    images: [
+      { src: A+"studymate.png",            cap: "chat — grounded answers with per-page citations" },
+      { src: A+"studymate-explain.png",    cap: "explain — beginner mode, analogy-driven and still grounded" },
+      { src: A+"studymate-flashcards.png", cap: "flashcards — generated from the document, click to flip" },
+      { src: A+"studymate-quiz.png",       cap: "quiz — LLM-graded with partial credit and explanations" },
+    ],
+  },
+  {
+    name: "Production LangGraph API", slug: "langgraph-api", stack: ["FastAPI","LangGraph","Docker","LangSmith"],
+    short: "A production grade LLM chat API. A single POST /chat endpoint wrapped in prompt-injection blocking, PII masking, response caching, rate limiting, and cross-provider model fallback. 61 tests at 100% coverage.",
+    sub: "production LLM service · live on Render",
+    long: [
+      "What it takes to run a language-model service in production. Every request flows through: security check → cache lookup → LangGraph agent → output validation → cache store → metrics.",
+    ],
+    features: [
+      "Prompt-injection blocking + PII masking",
+      "OpenAI primary → Claude Haiku fallback",
+      "TTL response cache, rate limiting",
+      "JSON logs, /metrics, LangSmith tracing",
+      "61 tests, 100% coverage, offline",
+      "Docker → Render auto-deploy",
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/bidhankhadka11/langgraph-api" },
+      { label: "Live API", href: "https://langgraph-api-dkzi.onrender.com/docs" },
+    ],
+    images: [{ src: A+"langgraph-api.png", cap: "docs — Swagger UI of the live deployed API" }],
+  },
+  {
+    name: "Rarify", slug: "rarify", stack: ["Kotlin","Compose","Material 3","SQLite"],
+    short: "A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles.",
+    sub: "native Android marketplace",
+    long: ["A native Android marketplace for rare collectibles where one account switches between buyer, seller, and admin roles. Jetpack Compose + Material 3, admin moderation, persisted themes."],
+    features: ["Buyer / seller / admin switching", "Admin moderation", "Persisted Material 3 themes", "SQLite persistence"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/rarify-marketplace" }],
+    images: [{ src: A+"rarify.png", cap: "marketplace home" }],
+  },
+  {
+    name: "Software Defect Classifier", slug: "defect-classifier", stack: ["Python","sklearn","pandas","RF-200"],
+    short: "A Kaggle binary-classification project that predicts whether a C code module contains a defect from its complexity metrics.",
+    sub: "Kaggle binary classification",
+    long: ["Predicts whether a C module contains a defect from complexity metrics. Class-balanced 200-tree Random Forest + RobustScaler; ~0.79 ROC-AUC on validation."],
+    features: ["Class-balanced RF (200 trees)", "RobustScaler preprocessing", "~0.79 ROC-AUC"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/binaryclassification" }],
+    images: [{ src: A+"binaryclassification.png", cap: "notebook — feature exploration" }],
+  },
+  {
+    name: "FitJournal", slug: "fitjournal", stack: ["React","Node","Express","MongoDB"],
+    short: "A full-stack MERN fitness tracker for logging workouts by exercise, reps, and weight.",
+    sub: "full-stack MERN tracker",
+    long: ["A MERN fitness tracker for logging workouts by exercise, reps, and weight. Full CRUD over a REST API, Context + Hooks state, MongoDB + Mongoose."],
+    features: ["Full CRUD REST API", "Context + Hooks state", "MongoDB + Mongoose"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }],
+    images: [{ src: A+"fitjournal.png", cap: "workout log" }],
+  },
+  {
+    name: "PersonaAI", slug: "persona-ai", stack: ["React","Express","Gemini API"],
+    short: "A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth.",
+    sub: "conversational AI chatbot",
+    long: ["A Gemini-powered chatbot with selectable personalities — Neko, Shadow, Sloth. React frontend → Express /chat endpoint; real-time replies with full history."],
+    features: ["Personality system prompts", "React → Express /chat", "Conversation history"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/AI-Chatbot" }],
+    images: [{ src: A+"persona.png", cap: "chat with Neko" }],
+  },
+  {
+    name: "Genetic Algorithm", slug: "genetic-algorithm", stack: ["Java","OOP"],
+    short: "A Java genetic algorithm that evolves a population of random character strings toward a target phrase.",
+    sub: "evolutionary computation in Java",
+    long: ["Evolves random character strings toward a target phrase. Elitist selection, single-point crossover, rate-based mutation in a clean OO design."],
+    features: ["Elitist selection", "Single-point crossover", "Rate-based mutation"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Genetic-Algorithm" }],
+    images: [{ src: A+"genetic.png", cap: "generations converging" }],
+  },
+  {
+    name: "Event-Driven Game", slug: "flappy-swing", stack: ["Java","Swing"],
+    short: "A Java Swing recreation of Flappy Bird with custom-rendered sprites and scrolling background.",
+    sub: "Java Swing game",
+    long: ["A Swing recreation of Flappy Bird with custom sprites and scrolling background. Swing Timer loop, KeyListener input, collision detection, live score, instant restart."],
+    features: ["Swing Timer game loop", "Collision detection", "Live score + restart"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Flappy-Bird-on-java" }],
+    images: [{ src: A+"flappy.png", cap: "mid-flight" }],
+  },
+];
+
+/* ---- grid ---- */
+const grid = document.getElementById("grid");
+projects.forEach((p, i) => {
+  const el = document.createElement("article");
+  el.className = "pcard";
+  el.innerHTML = `
+    <div class="bar"><div class="dots"><i></i><i></i><i></i></div>~/projects/${p.slug}</div>
+    <div class="pmedia"><img src="${p.images[0].src}" alt="${p.name}" />
+      ${p.images.length > 1 ? `<span class="count">${p.images.length} imgs</span>` : ""}
+    </div>
+    <div class="pbody">
+      <h3>${p.name}</h3><p>${p.short}</p>
+      <div class="open-hint">$ open ${p.slug} --fullscreen &nbsp;⏎</div>
+    </div>`;
+  el.addEventListener("click", () => openShow(i));
+  grid.appendChild(el);
+});
+
+/* ---- slideshow ---- */
+const show = document.getElementById("show");
+const drawer = document.getElementById("drawer");
+let cur = 0, imgIdx = 0, typeTimer = null;
+
+function openShow(i) {
+  cur = i; imgIdx = 0;
+  const p = projects[i];
+  document.getElementById("topcmd").innerHTML =
+    `<span class="u">bidhan@uta</span>:~$ open <span class="app">${p.slug}</span> --fullscreen`;
+  document.getElementById("dpath").textContent = `~/projects/${p.slug}`;
+  document.getElementById("mname").textContent = p.name;
+  document.getElementById("msub").textContent = p.sub;
+  document.getElementById("mdesc").innerHTML =
+    p.long.map(t => `<p>${t}</p>`).join("") +
+    `<ul>${p.features.map(f => `<li>${f}</li>`).join("")}</ul>`;
+  document.getElementById("mtags").innerHTML = p.stack.map(s => `<span class="tag">${s}</span>`).join("");
+  document.getElementById("mlinks").innerHTML =
+    p.links.map(l => `<a href="${l.href}" target="_blank" rel="noreferrer">${l.label}</a>`).join("");
+  const multi = p.images.length > 1;
+  document.getElementById("zl").classList.toggle("off", !multi);
+  document.getElementById("zr").classList.toggle("off", !multi);
+  drawer.classList.remove("open");
+  document.getElementById("dst").textContent = "[+] expand";
+  setImg(0);
+  show.classList.add("on");
+  document.body.style.overflow = "hidden";
+}
+function typeCap(text) {
+  const el = document.getElementById("mcap");
+  clearInterval(typeTimer);
+  el.textContent = "";
+  let n = 0;
+  typeTimer = setInterval(() => {
+    el.textContent = text.slice(0, ++n);
+    if (n >= text.length) clearInterval(typeTimer);
+  }, 14);
+}
+function setImg(k) {
+  const p = projects[cur];
+  imgIdx = (k + p.images.length) % p.images.length;
+  const img = document.getElementById("mimg");
+  img.classList.remove("zap");
+  void img.offsetWidth; // restart animation
+  img.src = p.images[imgIdx].src;
+  img.classList.add("zap");
+  typeCap(p.images[imgIdx].cap);
+  document.getElementById("progress").innerHTML = p.images.length > 1
+    ? p.images.map((_, j) => `<b class="${j === imgIdx ? "cur" : ""}" data-k="${j}">${j === imgIdx ? "●" : "○"}</b>`).join("")
+    : "";
+  document.querySelectorAll("#progress b").forEach(b =>
+    b.addEventListener("click", () => setImg(+b.dataset.k)));
+}
+function closeShow() { show.classList.remove("on"); document.body.style.overflow = ""; clearInterval(typeTimer); }
+
+document.getElementById("zl").addEventListener("click", () => setImg(imgIdx-1));
+document.getElementById("zr").addEventListener("click", () => setImg(imgIdx+1));
+document.getElementById("mclose").addEventListener("click", closeShow);
+document.getElementById("dtoggle").addEventListener("click", () => {
+  drawer.classList.toggle("open");
+  document.getElementById("dst").textContent = drawer.classList.contains("open") ? "[-] collapse" : "[+] expand";
+});
+document.addEventListener("keydown", e => {
+  if (!show.classList.contains("on")) return;
+  if (e.key === "Escape") closeShow();
+  if (e.key === "ArrowLeft") setImg(imgIdx-1);
+  if (e.key === "ArrowRight") setImg(imgIdx+1);
+  if (e.key === " ") { e.preventDefault(); document.getElementById("dtoggle").click(); }
+});
+
+window.addEventListener("load", () => setTimeout(() => openShow(0), 400));
+</script>
+</body>
+</html>

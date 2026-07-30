@@ -16,16 +16,24 @@ function linkLabel(l) {
   return `github.com/${repo}`
 }
 
-export default function ProjectCard({ name, slug, desc, stack = [], links = [], img }) {
+export default function ProjectCard({ name, slug, desc, stack = [], links = [], img, images = [], onOpen }) {
+  const id = slug || slugify(name)
   return (
-    <article className="pcard">
+    <article
+      className="pcard"
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter') onOpen?.() }}
+    >
       <div className="bar">
         <div className="dots" aria-hidden="true"><i></i><i></i><i></i></div>
-        ~/projects/{slug || slugify(name)}
+        ~/projects/{id}
       </div>
       {img && (
         <div className="pmedia">
           <img src={img} alt={name} />
+          {images.length > 1 && <span className="count">{images.length} imgs</span>}
         </div>
       )}
       <div className="pbody">
@@ -37,10 +45,12 @@ export default function ProjectCard({ name, slug, desc, stack = [], links = [], 
         {links?.length > 0 && (
           <div className="plinks">
             {links.map((l) => (
-              <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{linkLabel(l)}</a>
+              <a key={l.href} href={l.href} target="_blank" rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}>{linkLabel(l)}</a>
             ))}
           </div>
         )}
+        <div className="open-hint">$ tmux attach -t {id} &nbsp;⏎</div>
       </div>
     </article>
   )

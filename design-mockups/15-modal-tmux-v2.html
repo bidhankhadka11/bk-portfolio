@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 15 — Project Window: tmux Split V2 (subtle borders, clear images)</title>
+<style>
+  :root {
+    --bg: #050805;
+    --panel: #0a120c;
+    --panel-2: #0d1810;
+    --green: #4af26c;
+    --green-dim: #2c9648;
+    --green-faint: rgba(74, 242, 108, 0.14);
+    --amber: #ffc04c;
+    --text: #b8e6c4;
+    --muted: #6f9b7c;
+    --border: rgba(74, 242, 108, 0.28);
+    --border-soft: rgba(74, 242, 108, 0.16);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", Consolas, monospace;
+    background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--green); color: #000; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 999; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 3px);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 998; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 10, 2, 0.55) 100%);
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker { 0%,100% { opacity: 1; } 92% { opacity: 1; } 93% { opacity: 0.86; } 94% { opacity: 1; } 97% { opacity: 0.93; } }
+
+  .container { max-width: 1060px; margin: 0 auto; padding: 0 1.5rem; }
+  .section { padding: 60px 0 90px; }
+  .sec-cmd { color: var(--muted); margin-bottom: 8px; }
+  .sec-cmd .u { color: var(--green); } .sec-cmd .h { color: var(--amber); } .sec-cmd .cmd { color: var(--text); }
+  .sec-note { color: var(--muted); font-size: 13px; margin-bottom: 26px; }
+  .sec-note::before { content: "# "; color: var(--green-dim); }
+
+  /* Projects grid */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .pcard { background: var(--panel); border: 1px solid var(--border); transition: all .2s; display: flex; flex-direction: column; cursor: pointer; }
+  .pcard:hover { border-color: var(--green); box-shadow: 0 0 22px rgba(74, 242, 108, 0.18); }
+  .pcard .bar {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    background: var(--panel-2); border-bottom: 1px solid var(--border);
+    color: var(--muted); font-size: 12px;
+  }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; }
+  .dots i:nth-child(1) { background: #ff5f56; } .dots i:nth-child(2) { background: #ffbd2e; } .dots i:nth-child(3) { background: #27c93f; }
+  .pmedia { height: 210px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+  .pmedia img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block;
+    filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.4) brightness(0.82) contrast(1.05);
+    transition: filter .35s ease, transform .35s ease;
+  }
+  .pcard:hover .pmedia img { filter: none; transform: scale(1.04); }
+  .pmedia::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0 1px, transparent 1px 3px);
+  }
+  .pmedia .count {
+    position: absolute; right: 8px; bottom: 8px; z-index: 2;
+    background: rgba(5, 8, 5, 0.85); border: 1px solid var(--border);
+    color: var(--green); font-size: 11px; padding: 1px 8px;
+  }
+  .pbody { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+  .pbody h3 { font-size: 15px; color: #eafff0; font-weight: 700; margin-bottom: 6px; }
+  .pbody h3::before { content: "> "; color: var(--green); }
+  .pcard:hover h3 { color: var(--green); text-shadow: 0 0 8px rgba(74,242,108,0.5); }
+  .pbody p { color: var(--muted); font-size: 12.5px; flex: 1; }
+  .pbody .open-hint { margin-top: 12px; color: var(--green-dim); font-size: 11.5px; }
+  .pcard:hover .open-hint { color: var(--amber); }
+
+  /* ============ MODAL — tmux session V2 ============ */
+  /* z-index above the page CRT overlay (999) so images render with zero grain */
+  .overlay {
+    position: fixed; inset: 0; z-index: 1500; display: none;
+    background: rgba(2, 5, 2, 0.84); backdrop-filter: blur(3px);
+    align-items: center; justify-content: center; padding: 22px;
+  }
+  .overlay.on { display: flex; }
+  .tmux {
+    width: min(1140px, 97vw); height: min(720px, 90vh);
+    display: flex; flex-direction: column;
+    background: var(--panel); border: 1px solid var(--green);
+    box-shadow: 0 0 60px rgba(74, 242, 108, 0.22), 0 0 0 1px rgba(0,0,0,0.6);
+  }
+  .overlay.on .tmux { animation: attach .25s ease-out; }
+  @keyframes attach { 0% { opacity: 0; transform: scale(0.97) translateY(10px); } 100% { opacity: 1; transform: none; } }
+
+  /* Title bar — traffic lights on the right */
+  .mbar {
+    flex-shrink: 0; display: flex; align-items: center; gap: 12px;
+    padding: 9px 14px; background: var(--panel-2); border-bottom: 1px solid var(--border-soft);
+    color: var(--muted); font-size: 12.5px;
+  }
+  .mbar .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mbar .title b { color: var(--green); font-weight: 400; }
+  .mbar .dots { margin-left: auto; gap: 8px; flex-shrink: 0; }
+  .mbar .dots i { width: 12px; height: 12px; position: relative; cursor: pointer; transition: filter .15s; }
+  .mbar .dots i:hover { filter: brightness(1.25); }
+  .mbar .dots i.close::before {
+    content: "✕"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: rgba(0,0,0,0.55); opacity: 0; font-style: normal;
+  }
+  .mbar .dots:hover i.close::before { opacity: 1; }
+
+  .panes { flex: 1; display: flex; min-height: 0; }
+  @media (max-width: 900px) { .panes { flex-direction: column; } }
+  .pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .pane-img { flex: 1.35; border-right: 1px solid var(--border-soft); }
+  .pane-doc { flex: 1; }
+  @media (max-width: 900px) {
+    .pane-img { flex: 1.2; border-right: none; border-bottom: 1px solid var(--border-soft); }
+  }
+
+  /* tmux-style pane label: text label + hairline */
+  .phead {
+    flex-shrink: 0; display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px 0; color: var(--muted); font-size: 11.5px; user-select: none;
+  }
+  .phead .line { flex: 1; border-top: 1px solid var(--border-soft); }
+  .phead .line.short { flex: 0 0 14px; }
+  .phead .lbl { color: var(--muted); }
+  .phead .lbl::before { content: "┤ "; color: var(--border); }
+  .phead .lbl::after { content: " ├"; color: var(--border); }
+  .pane.focused .phead .lbl { color: var(--green); }
+
+  /* image pane — clear by default, no grain, no filter */
+  .imgwrap { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #030503; min-height: 0; margin: 10px 14px; }
+  .imgwrap img { max-width: 100%; max-height: 100%; display: block; animation: img-in .18s ease; }
+  @keyframes img-in { 0% { opacity: 0; transform: translateX(6px); } 100% { opacity: 1; transform: none; } }
+  /* opt-in phosphor tint via toggle */
+  .imgwrap.tinted img { filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.4) brightness(0.82) contrast(1.05); }
+  .imgwrap.tinted::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.13) 0 1px, transparent 1px 3px);
+  }
+  .navbtn {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+    background: rgba(5, 8, 5, 0.8); color: var(--green); border: 1px solid var(--border-soft);
+    font-family: inherit; font-size: 18px; line-height: 1; padding: 12px 10px; cursor: pointer; transition: all .15s;
+  }
+  .navbtn:hover { border-color: var(--green); box-shadow: 0 0 14px rgba(74,242,108,0.3); }
+  .navbtn.prev { left: 8px; } .navbtn.next { right: 8px; }
+  .navbtn.hidden { display: none; }
+  .imgstatus {
+    display: flex; align-items: center; gap: 12px; padding: 0 14px 10px; font-size: 11.5px; color: var(--muted);
+    flex-shrink: 0; overflow: hidden; white-space: nowrap;
+  }
+  .imgstatus .f { color: var(--amber); }
+  .imgstatus .cap { overflow: hidden; text-overflow: ellipsis; }
+  .imgstatus .tint {
+    margin-left: auto; cursor: pointer; flex-shrink: 0; user-select: none;
+    border: 1px solid var(--border-soft); padding: 0 8px; transition: all .15s;
+  }
+  .imgstatus .tint:hover { color: var(--green); border-color: var(--green); }
+  .imgstatus .tint b { color: var(--green); font-weight: 400; }
+
+  /* doc pane */
+  .doc { flex: 1; overflow-y: auto; padding: 8px 20px 24px; min-height: 0; }
+  .doc::-webkit-scrollbar { width: 10px; }
+  .doc::-webkit-scrollbar-thumb { background: var(--green-dim); border: 2px solid var(--panel); }
+  .doc::-webkit-scrollbar-track { background: var(--panel-2); }
+  .doc .h { color: var(--amber); font-size: 12px; letter-spacing: 1.5px; margin: 18px 0 6px; }
+  .doc h2 { color: #eafff0; font-size: 17px; margin-bottom: 2px; }
+  .doc h2::before { content: "> "; color: var(--green); }
+  .doc .sub { color: var(--green-dim); font-size: 12px; margin-bottom: 4px; }
+  .doc p { color: var(--muted); font-size: 12.5px; margin: 6px 0; }
+  .doc ul { list-style: none; }
+  .doc ul li { color: var(--muted); font-size: 12.5px; padding: 1px 0; }
+  .doc ul li::before { content: "[x] "; color: var(--green); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag { font-size: 11px; color: var(--green); border: 1px solid var(--border-soft); padding: 1px 8px; background: rgba(74, 242, 108, 0.05); }
+  .tag::before { content: "["; color: var(--green-dim); } .tag::after { content: "]"; color: var(--green-dim); }
+  .plinks { margin-top: 4px; }
+  .plinks a { color: var(--amber); font-size: 12.5px; border-bottom: 1px dashed rgba(255, 192, 76, 0.5); margin-right: 16px; }
+  .plinks a::before { content: "↗ "; }
+  .plinks a:hover { color: #ffd685; border-bottom-style: solid; }
+  .doc .eof { color: var(--green-dim); margin-top: 18px; font-size: 12px; }
+
+  /* tmux status bar — kept, slightly muted */
+  .status {
+    flex-shrink: 0; display: flex; align-items: center; gap: 14px;
+    background: var(--panel-2); border-top: 1px solid var(--border-soft);
+    color: var(--muted); font-size: 12px; padding: 5px 12px; overflow: hidden; white-space: nowrap;
+  }
+  .status .sess { color: var(--green); flex-shrink: 0; }
+  .status .wins { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .status .wins::-webkit-scrollbar { display: none; }
+  .status .win { cursor: pointer; padding: 0 7px; transition: all .12s; }
+  .status .win:hover { color: var(--green); background: var(--green-faint); }
+  .status .win.cur { color: var(--amber); background: rgba(255, 192, 76, 0.08); }
+  .status .right { margin-left: auto; flex-shrink: 0; font-size: 11.5px; }
+  @media (max-width: 700px) { .status .right { display: none; } }
+</style>
+</head>
+<body>
+
+<section class="section">
+  <div class="container">
+    <div class="sec-cmd"><span class="u">bidhan@uta</span>:<span class="h">~/portfolio</span>$ <span class="cmd">ls -la ./projects/</span></div>
+    <p class="sec-note">mockup 15 · tmux split v2 — one green outline, hairline pane dividers, mac traffic lights on the right. images are fully clear; flip "tint" in the image pane to bring the phosphor filter back.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<div class="overlay" id="overlay">
+  <div class="tmux" role="dialog" aria-modal="true">
+    <div class="mbar">
+      <span class="title" id="mtitle"></span>
+      <div class="dots" id="mdots">
+        <i class="close" style="background:#ff5f56" id="dotClose" title="close"></i>
+        <i style="background:#ffbd2e" title="minimize"></i>
+        <i style="background:#27c93f" title="zoom"></i>
+      </div>
+    </div>
+    <div class="panes">
+      <div class="pane pane-img focused" id="paneImg">
+        <div class="phead"><span class="line short"></span><span class="lbl" id="ptitleImg">0: feh</span><span class="line"></span></div>
+        <div class="imgwrap" id="imgwrap">
+          <img id="mimg" src="" alt="" />
+          <button class="navbtn prev" id="prev" aria-label="previous">&lsaquo;</button>
+          <button class="navbtn next" id="next" aria-label="next">&rsaquo;</button>
+        </div>
+        <div class="imgstatus">
+          <span class="f" id="midx"></span><span class="cap" id="mcap"></span>
+          <span class="tint" id="tintbtn">tint: <b>off</b></span>
+        </div>
+      </div>
+      <div class="pane pane-doc" id="paneDoc">
+        <div class="phead"><span class="line short"></span><span class="lbl">1: less README.md</span><span class="line"></span></div>
+        <div class="doc" id="doc"></div>
+      </div>
+    </div>
+    <div class="status">
+      <span class="sess" id="sess">[studymate]</span>
+      <div class="wins" id="wins"></div>
+      <span class="right">←/→ imgs · t tint · esc quit</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const A = "../public/assets/";
+const projects = [
+  {
+    name: "StudyMate", slug: "studymate", stack: ["FastAPI","LangChain","pgvector","React 19"],
+    short: "A retrieval augmented study assistant over your own PDFs. Answers are grounded in retrieved chunks and cited to filename and page, and questions the corpus can't answer get a refusal, not a hallucination.",
+    sub: "RAG study assistant",
+    long: [
+      "Upload your coursework PDFs and ask questions. Documents are chunked into per-document pgvector collections, so queries can be scoped to any subset — and every answer is grounded in retrieved text and cited back to filename and page.",
+      "Questions the corpus doesn't answer return an honest refusal instead of a hallucination.",
+    ],
+    features: [
+      "Grounded Q&A — every claim cited to filename, page N",
+      "\"Explain like I'm a beginner\" mode",
+      "Flashcards with a flip-card review UI",
+      "LLM-graded quizzes with partial credit",
+      "RAG made a 634-page book ~240× cheaper to query",
+      "Eval: 52 hand-verified questions, recall@6 = 0.92",
+    ],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/StudyMate" }],
+    images: [
+      { win: "chat",       src: A+"studymate.png",            cap: "grounded answers with per-page citations" },
+      { win: "explain",    src: A+"studymate-explain.png",    cap: "beginner mode — analogy-driven, still grounded" },
+      { win: "flashcards", src: A+"studymate-flashcards.png", cap: "generated from the document, click to flip" },
+      { win: "quiz",       src: A+"studymate-quiz.png",       cap: "LLM-graded with partial credit + explanations" },
+    ],
+  },
+  {
+    name: "Production LangGraph API", slug: "langgraph-api", stack: ["FastAPI","LangGraph","Docker","LangSmith"],
+    short: "A production grade LLM chat API. A single POST /chat endpoint wrapped in prompt-injection blocking, PII masking, response caching, rate limiting, and cross-provider model fallback. 61 tests at 100% coverage.",
+    sub: "production LLM service · live on Render",
+    long: [
+      "What it takes to run a language-model service in production. Every request flows: security check → cache lookup → LangGraph agent → output validation → cache store → metrics.",
+    ],
+    features: [
+      "Prompt-injection blocking + PII masking, in and out",
+      "OpenAI primary → Claude Haiku fallback",
+      "TTL response cache + per-client rate limiting",
+      "JSON logs, /metrics, LangSmith tracing",
+      "61 tests, 100% coverage, offline FakeLLM",
+      "Docker → Render, auto-deploy on push",
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/bidhankhadka11/langgraph-api" },
+      { label: "Live API", href: "https://langgraph-api-dkzi.onrender.com/docs" },
+    ],
+    images: [{ win: "docs", src: A+"langgraph-api.png", cap: "Swagger UI of the live deployed API" }],
+  },
+  {
+    name: "Rarify", slug: "rarify", stack: ["Kotlin","Compose","Material 3","SQLite"],
+    short: "A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles.",
+    sub: "native Android marketplace",
+    long: ["A native Android marketplace for rare collectibles where one account switches between buyer, seller, and admin roles. Jetpack Compose + Material 3, with admin moderation and persisted themes."],
+    features: ["Buyer / seller / admin role switching", "Admin moderation of listings", "Persisted Material 3 themes", "SQLite persistence"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/rarify-marketplace" }],
+    images: [{ win: "home", src: A+"rarify.png", cap: "marketplace home" }],
+  },
+  {
+    name: "Software Defect Classifier", slug: "defect-classifier", stack: ["Python","sklearn","pandas","RF-200"],
+    short: "A Kaggle binary-classification project that predicts whether a C code module contains a defect from its complexity metrics.",
+    sub: "Kaggle binary classification",
+    long: ["Predicts whether a C module contains a defect from complexity metrics. Class-balanced 200-tree Random Forest + RobustScaler; ~0.79 ROC-AUC on validation."],
+    features: ["Class-balanced RF (200 trees)", "RobustScaler preprocessing", "~0.79 ROC-AUC"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/binaryclassification" }],
+    images: [{ win: "notebook", src: A+"binaryclassification.png", cap: "feature exploration" }],
+  },
+  {
+    name: "FitJournal", slug: "fitjournal", stack: ["React","Node","Express","MongoDB"],
+    short: "A full-stack MERN fitness tracker for logging workouts by exercise, reps, and weight.",
+    sub: "full-stack MERN tracker",
+    long: ["A MERN fitness tracker for logging workouts by exercise, reps, and weight. Full CRUD over a REST API, global state via Context + Hooks, MongoDB + Mongoose."],
+    features: ["Full CRUD REST API", "Context + Hooks state", "MongoDB + Mongoose"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Workout-Buddy" }],
+    images: [{ win: "log", src: A+"fitjournal.png", cap: "workout log" }],
+  },
+  {
+    name: "PersonaAI", slug: "persona-ai", stack: ["React","Express","Gemini API"],
+    short: "A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth.",
+    sub: "conversational AI chatbot",
+    long: ["A Gemini-powered chatbot with selectable personalities — Neko, Shadow, Sloth. React frontend → Express /chat endpoint; real-time replies with full history."],
+    features: ["Personality system prompts", "React → Express /chat", "Full conversation history"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/AI-Chatbot" }],
+    images: [{ win: "chat", src: A+"persona.png", cap: "chat with Neko" }],
+  },
+  {
+    name: "Genetic Algorithm", slug: "genetic-algorithm", stack: ["Java","OOP"],
+    short: "A Java genetic algorithm that evolves a population of random character strings toward a target phrase.",
+    sub: "evolutionary computation in Java",
+    long: ["Evolves random character strings toward a target phrase. Elitist selection, single-point crossover, rate-based mutation in a clean OO design."],
+    features: ["Elitist selection", "Single-point crossover", "Rate-based mutation"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Genetic-Algorithm" }],
+    images: [{ win: "run", src: A+"genetic.png", cap: "generations converging" }],
+  },
+  {
+    name: "Event-Driven Game", slug: "flappy-swing", stack: ["Java","Swing"],
+    short: "A Java Swing recreation of Flappy Bird with custom-rendered sprites and scrolling background.",
+    sub: "Java Swing game",
+    long: ["A Swing recreation of Flappy Bird with custom sprites and scrolling background. Swing Timer loop, KeyListener input, collision detection, live score, instant restart."],
+    features: ["Swing Timer game loop", "Collision detection", "Live score + restart"],
+    links: [{ label: "GitHub", href: "https://github.com/bidhankhadka11/Flappy-Bird-on-java" }],
+    images: [{ win: "game", src: A+"flappy.png", cap: "mid-flight" }],
+  },
+];
+
+/* ---- grid ---- */
+const grid = document.getElementById("grid");
+projects.forEach((p, i) => {
+  const el = document.createElement("article");
+  el.className = "pcard";
+  el.innerHTML = `
+    <div class="bar"><div class="dots"><i></i><i></i><i></i></div>~/projects/${p.slug}</div>
+    <div class="pmedia"><img src="${p.images[0].src}" alt="${p.name}" />
+      ${p.images.length > 1 ? `<span class="count">${p.images.length} imgs</span>` : ""}
+    </div>
+    <div class="pbody">
+      <h3>${p.name}</h3><p>${p.short}</p>
+      <div class="open-hint">$ tmux attach -t ${p.slug} &nbsp;⏎</div>
+    </div>`;
+  el.addEventListener("click", () => openModal(i));
+  grid.appendChild(el);
+});
+
+/* ---- modal ---- */
+const overlay = document.getElementById("overlay");
+const imgwrap = document.getElementById("imgwrap");
+let cur = 0, imgIdx = 0, tinted = false;
+
+function openModal(i) {
+  cur = i; imgIdx = 0;
+  const p = projects[i];
+  document.getElementById("mtitle").innerHTML = `bidhan@uta: <b>tmux attach -t ${p.slug}</b>`;
+  document.getElementById("sess").textContent = `[${p.slug}]`;
+  document.getElementById("doc").innerHTML = `
+    <div class="h">NAME</div>
+    <h2>${p.name}</h2>
+    <div class="sub">${p.sub}</div>
+    <div class="h">DESCRIPTION</div>
+    ${p.long.map(t => `<p>${t}</p>`).join("")}
+    <div class="h">FEATURES</div>
+    <ul>${p.features.map(f => `<li>${f}</li>`).join("")}</ul>
+    <div class="h">STACK</div>
+    <div class="tags">${p.stack.map(s => `<span class="tag">${s}</span>`).join("")}</div>
+    <div class="h">LINKS</div>
+    <div class="plinks">${p.links.map(l => `<a href="${l.href}" target="_blank" rel="noreferrer">${l.label}</a>`).join("")}</div>
+    <div class="eof">(END)</div>`;
+  const wins = document.getElementById("wins");
+  wins.innerHTML = p.images.map((im, k) => `<span class="win" data-k="${k}">${k}:${im.win}</span>`).join("");
+  wins.querySelectorAll(".win").forEach(w =>
+    w.addEventListener("click", e => { e.stopPropagation(); setImg(+w.dataset.k); }));
+  const multi = p.images.length > 1;
+  document.getElementById("prev").classList.toggle("hidden", !multi);
+  document.getElementById("next").classList.toggle("hidden", !multi);
+  setImg(0);
+  overlay.classList.add("on");
+  document.body.style.overflow = "hidden";
+}
+function setImg(k) {
+  const p = projects[cur];
+  imgIdx = (k + p.images.length) % p.images.length;
+  const im = p.images[imgIdx];
+  const img = document.getElementById("mimg");
+  img.src = "";
+  requestAnimationFrame(() => { img.src = im.src; });
+  document.getElementById("ptitleImg").textContent = `0: feh ${im.win}.png`;
+  document.getElementById("midx").textContent = `[${imgIdx+1}/${p.images.length}]`;
+  document.getElementById("mcap").textContent = ` ${im.cap}`;
+  document.querySelectorAll("#wins .win").forEach((w, j) => {
+    w.classList.toggle("cur", j === imgIdx);
+    w.textContent = `${j}:${p.images[j].win}${j === imgIdx ? "*" : ""}`;
+  });
+}
+function closeModal() { overlay.classList.remove("on"); document.body.style.overflow = ""; }
+
+document.getElementById("prev").addEventListener("click", e => { e.stopPropagation(); setImg(imgIdx-1); });
+document.getElementById("next").addEventListener("click", e => { e.stopPropagation(); setImg(imgIdx+1); });
+document.getElementById("dotClose").addEventListener("click", closeModal);
+overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+document.getElementById("tintbtn").addEventListener("click", () => {
+  tinted = !tinted;
+  imgwrap.classList.toggle("tinted", tinted);
+  document.getElementById("tintbtn").innerHTML = `tint: <b>${tinted ? "on" : "off"}</b>`;
+});
+["paneImg","paneDoc"].forEach(id =>
+  document.getElementById(id).addEventListener("click", () => {
+    document.querySelectorAll(".pane").forEach(pn => pn.classList.remove("focused"));
+    document.getElementById(id).classList.add("focused");
+  }));
+document.addEventListener("keydown", e => {
+  if (!overlay.classList.contains("on")) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowLeft") setImg(imgIdx-1);
+  if (e.key === "ArrowRight") setImg(imgIdx+1);
+  if (e.key === "t") document.getElementById("tintbtn").click();
+});
+
+window.addEventListener("load", () => setTimeout(() => openModal(0), 400));
+</script>
+</body>
+</html>
