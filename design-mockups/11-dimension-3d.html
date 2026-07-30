@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 11 — Dimension (3D depth & tilt)</title>
+<style>
+  :root {
+    --bg: #0e0f1e;
+    --bg-2: #131530;
+    --card: #181a36;
+    --card-2: #1e2144;
+    --text: #e8eaff;
+    --muted: #9aa0c9;
+    --violet: #8b5cf6;
+    --cyan: #22d3ee;
+    --pink: #f472b6;
+    --border: rgba(139, 92, 246, 0.28);
+    --depth: #4c3a91;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55; overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--violet); color: #fff; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* Floating ambient blobs */
+  .blob { position: fixed; border-radius: 50%; filter: blur(90px); opacity: .35; pointer-events: none; z-index: 0; }
+  .blob.b1 { width: 480px; height: 480px; background: #3b2a86; top: -140px; right: -120px; }
+  .blob.b2 { width: 420px; height: 420px; background: #123b4e; bottom: -140px; left: -140px; }
+
+  /* Nav — floating 3D slab */
+  .nav {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 100;
+    display: flex; align-items: center; gap: 4px;
+    background: linear-gradient(180deg, var(--card-2), var(--card));
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 8px 10px 8px 18px;
+    box-shadow: 0 4px 0 #23255088, 0 14px 34px rgba(0, 0, 0, 0.55);
+  }
+  .nav .brand {
+    font-weight: 900; font-size: 15px; margin-right: 16px;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav a.link { color: var(--muted); font-size: 13.5px; font-weight: 600; padding: 7px 13px; border-radius: 9px; transition: all .15s; }
+  .nav a.link:hover { color: var(--text); background: rgba(139, 92, 246, 0.14); transform: translateY(-1px); }
+
+  /* 3D press-able button */
+  .btn {
+    display: inline-block; font-weight: 800; font-size: 14px; cursor: pointer; border: none;
+    padding: 12px 24px; border-radius: 12px; color: #fff;
+    background: linear-gradient(180deg, #a78bfa, var(--violet));
+    box-shadow: 0 6px 0 #5b3fb8, 0 14px 26px rgba(139, 92, 246, 0.35);
+    transition: transform .1s, box-shadow .1s;
+  }
+  .btn:hover { transform: translateY(2px); box-shadow: 0 4px 0 #5b3fb8, 0 10px 20px rgba(139, 92, 246, 0.35); }
+  .btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #5b3fb8, 0 6px 14px rgba(139, 92, 246, 0.3); }
+  .btn.cyan { background: linear-gradient(180deg, #67e8f9, #0ea5c9); box-shadow: 0 6px 0 #0b7a99, 0 14px 26px rgba(34, 211, 238, 0.3); }
+  .btn.cyan:hover { box-shadow: 0 4px 0 #0b7a99, 0 10px 20px rgba(34, 211, 238, 0.3); }
+  .btn.ghost { background: var(--card-2); color: var(--muted); box-shadow: 0 6px 0 #101228, 0 14px 26px rgba(0,0,0,0.4); }
+  .btn.ghost:hover { color: var(--text); box-shadow: 0 4px 0 #101228, 0 10px 20px rgba(0,0,0,0.4); }
+
+  /* HERO */
+  .hero { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; padding: 110px 0 60px; perspective: 1200px; }
+  .hero .container { display: flex; align-items: center; justify-content: space-between; gap: 44px; }
+  .hero-text { max-width: 600px; }
+  .eyebrow {
+    display: inline-block; font-size: 12.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--cyan); background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.35);
+    padding: 7px 15px; border-radius: 999px; margin-bottom: 26px;
+    box-shadow: 0 3px 0 rgba(34, 211, 238, 0.18);
+  }
+  /* Extruded 3D headline */
+  .hero h1 { font-size: clamp(54px, 7.4vw, 92px); font-weight: 900; line-height: 1.0; letter-spacing: -2.5px; margin-bottom: 26px; }
+  .hero h1 .flat { color: var(--text); }
+  .hero h1 .deep {
+    display: inline-block; color: #c4b5fd;
+    text-shadow:
+      1px 1px 0 var(--depth), 2px 2px 0 var(--depth), 3px 3px 0 var(--depth),
+      4px 4px 0 var(--depth), 5px 5px 0 var(--depth), 6px 6px 0 var(--depth),
+      7px 7px 0 var(--depth), 8px 8px 0 var(--depth),
+      12px 16px 30px rgba(0, 0, 0, 0.6);
+    animation: bob 5s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+  .hero p { color: var(--muted); font-size: 17px; font-weight: 500; max-width: 540px; margin-bottom: 32px; line-height: 1.7; }
+  .hl { color: var(--cyan); font-weight: 700; }
+  .hl.v { color: #c4b5fd; }
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .social-row { display: flex; gap: 12px; margin-top: 38px; }
+  .social-row a {
+    font-size: 13px; font-weight: 700; color: var(--muted); background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 16px;
+    box-shadow: 0 4px 0 #101228; transition: all .12s;
+  }
+  .social-row a:hover { color: var(--text); transform: translateY(2px); box-shadow: 0 2px 0 #101228; }
+
+  /* Hero 3D scene: floating portrait card + orbit cube */
+  .scene { flex-shrink: 0; position: relative; transform-style: preserve-3d; }
+  .portrait-card {
+    position: relative; transform-style: preserve-3d; border-radius: 22px;
+    background: linear-gradient(160deg, var(--card-2), var(--card));
+    border: 1px solid var(--border); padding: 16px 16px 14px;
+    box-shadow: 0 10px 0 #1a1440, 0 34px 60px rgba(0, 0, 0, 0.6);
+    transition: transform .18s ease-out; will-change: transform;
+    animation: bob 6s ease-in-out infinite;
+  }
+  .portrait-card .frame {
+    border-radius: 14px; overflow: hidden; transform: translateZ(34px);
+    background: linear-gradient(160deg, #241f4e, #14162e);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+  }
+  .portrait-card img { display: block; height: 380px; width: auto; }
+  .portrait-card .cap {
+    text-align: center; color: var(--muted); font-size: 12px; font-weight: 600;
+    margin-top: 12px; transform: translateZ(46px);
+  }
+  .portrait-card .cap b { color: var(--cyan); }
+  /* floating badge chips around the card */
+  .chip3d {
+    position: absolute; z-index: 3; font-size: 12px; font-weight: 800; color: #fff;
+    padding: 7px 14px; border-radius: 10px; transform: translateZ(70px);
+    box-shadow: 0 5px 0 rgba(0,0,0,0.35), 0 14px 26px rgba(0,0,0,0.45);
+    animation: bob 4.4s ease-in-out infinite;
+  }
+  .chip3d.c1 { top: -16px; left: -34px; background: linear-gradient(180deg, #a78bfa, #7c3aed); animation-delay: -1s; }
+  .chip3d.c2 { bottom: 66px; right: -40px; background: linear-gradient(180deg, #67e8f9, #0891b2); animation-delay: -2.2s; }
+  .chip3d.c3 { top: 44%; left: -58px; background: linear-gradient(180deg, #f9a8d4, #db2777); animation-delay: -3.1s; }
+
+  /* spinning tech cube */
+  .cube-wrap { position: absolute; right: -30px; top: -70px; width: 84px; height: 84px; perspective: 700px; z-index: 4; }
+  .cube { position: absolute; inset: 0; transform-style: preserve-3d; animation: spin 14s linear infinite; }
+  @keyframes spin { from { transform: rotateX(-18deg) rotateY(0deg); } to { transform: rotateX(-18deg) rotateY(360deg); } }
+  .face {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900; color: #fff; letter-spacing: 0.04em;
+    background: rgba(139, 92, 246, 0.16); border: 1px solid rgba(139, 92, 246, 0.55);
+    backdrop-filter: blur(2px); box-shadow: inset 0 0 24px rgba(139, 92, 246, 0.25);
+  }
+  .face:nth-child(1) { transform: rotateY(0deg) translateZ(42px); }
+  .face:nth-child(2) { transform: rotateY(90deg) translateZ(42px); }
+  .face:nth-child(3) { transform: rotateY(180deg) translateZ(42px); }
+  .face:nth-child(4) { transform: rotateY(270deg) translateZ(42px); }
+  .face:nth-child(5) { transform: rotateX(90deg) translateZ(42px); }
+  .face:nth-child(6) { transform: rotateX(-90deg) translateZ(42px); }
+  @media (max-width: 1080px) { .scene { display: none; } }
+
+  /* Sections */
+  .section { position: relative; z-index: 1; padding: 96px 0; }
+  .sec-head { margin-bottom: 44px; }
+  .sec-head h2 {
+    display: inline-block; font-size: clamp(34px, 4.6vw, 52px); font-weight: 900; letter-spacing: -1.5px;
+    color: #ddd6fe;
+    text-shadow: 1px 1px 0 var(--depth), 2px 2px 0 var(--depth), 3px 3px 0 var(--depth),
+      4px 4px 0 var(--depth), 5px 5px 0 var(--depth), 8px 10px 24px rgba(0,0,0,0.55);
+  }
+  .sec-head p { color: var(--muted); font-size: 16px; margin-top: 12px; }
+
+  /* Projects — tilt cards with depth layers */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; perspective: 1400px; }
+  @media (max-width: 840px) { .grid { grid-template-columns: 1fr; } }
+  .pcard {
+    position: relative; transform-style: preserve-3d; border-radius: 20px;
+    background: linear-gradient(165deg, var(--card-2), var(--card));
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 0 #16183a, 0 26px 50px rgba(0, 0, 0, 0.5);
+    transition: transform .16s ease-out, box-shadow .2s;
+    display: flex; flex-direction: column; will-change: transform;
+  }
+  .pcard:hover { box-shadow: 0 8px 0 #16183a, 0 40px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(139, 92, 246, 0.14); }
+  .pcard .glare {
+    position: absolute; inset: 0; border-radius: 20px; pointer-events: none; z-index: 5;
+    background: radial-gradient(600px circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,0.1), transparent 45%);
+    opacity: 0; transition: opacity .2s;
+  }
+  .pcard:hover .glare { opacity: 1; }
+  .pmedia { margin: 14px 14px 0; border-radius: 12px; overflow: hidden; transform: translateZ(30px); box-shadow: 0 16px 34px rgba(0,0,0,0.5); height: 240px; }
+  .pmedia img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .3s; }
+  .pcard:hover .pmedia img { transform: scale(1.05); }
+  .pbody { padding: 20px 24px 24px; flex: 1; display: flex; flex-direction: column; transform: translateZ(20px); }
+  .pbody h3 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 8px; }
+  .pcard:hover h3 { color: #c4b5fd; }
+  .pbody p { color: var(--muted); font-size: 13.5px; line-height: 1.6; flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .tag {
+    font-size: 11px; font-weight: 700; color: #c4b5fd;
+    background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.35);
+    padding: 3px 10px; border-radius: 8px; box-shadow: 0 2px 0 rgba(139, 92, 246, 0.2);
+  }
+  .plinks { margin-top: 16px; }
+  .plinks a {
+    display: inline-block; color: #67e8f9; font-weight: 800; font-size: 12.5px;
+    background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.35);
+    padding: 6px 16px; border-radius: 9px; box-shadow: 0 3px 0 rgba(11, 122, 153, 0.5); transition: all .12s;
+  }
+  .plinks a:hover { transform: translateY(2px); box-shadow: 0 1px 0 rgba(11, 122, 153, 0.5); }
+
+  /* Experience — stacked 3D slabs */
+  .exp-list { display: flex; flex-direction: column; gap: 30px; max-width: 880px; perspective: 1400px; }
+  .exp-card {
+    transform-style: preserve-3d; position: relative; border-radius: 18px;
+    background: linear-gradient(165deg, var(--card-2), var(--card));
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 0 #16183a, 0 24px 46px rgba(0, 0, 0, 0.5);
+    padding: 30px 36px; display: flex; justify-content: space-between; gap: 30px;
+    transition: transform .16s ease-out; will-change: transform;
+  }
+  .exp-role { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; transform: translateZ(24px); }
+  .exp-org { color: var(--cyan); font-size: 15px; font-weight: 700; margin-top: 4px; transform: translateZ(24px); }
+  .exp-desc { color: var(--muted); font-size: 14.5px; line-height: 1.7; margin-top: 12px; max-width: 600px; transform: translateZ(14px); }
+  .exp-meta { flex-shrink: 0; text-align: right; transform: translateZ(20px); }
+  .exp-meta .pill {
+    display: inline-block; color: var(--muted); font-size: 12.5px; font-weight: 700;
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 14px; margin-bottom: 8px; box-shadow: 0 3px 0 #101228;
+  }
+  @media (max-width: 768px) { .exp-card { flex-direction: column; gap: 14px; } .exp-meta { text-align: left; } }
+
+  /* Contact — big 3D panel */
+  .contact-panel {
+    border-radius: 24px; background: linear-gradient(165deg, var(--card-2), var(--card));
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 0 #16183a, 0 36px 70px rgba(0, 0, 0, 0.55);
+    padding: 52px; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 52px;
+  }
+  .contact-lead { color: var(--muted); font-size: 15px; line-height: 1.75; margin-bottom: 26px; }
+  .contact-email {
+    display: inline-block; color: var(--text); font-size: 14.5px; font-weight: 700;
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 18px; box-shadow: 0 5px 0 #101228;
+  }
+  .contact-email span { color: var(--pink); margin-right: 8px; }
+  form { display: grid; gap: 14px; }
+  .row { display: flex; gap: 14px; } .row > * { flex: 1; }
+  input, textarea {
+    background: var(--bg-2); color: var(--text); border: 1px solid var(--border); border-radius: 12px;
+    padding: 13px 16px; font-size: 14px; font-family: inherit; width: 100%;
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4); transition: all .15s;
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--violet); box-shadow: inset 0 3px 8px rgba(0,0,0,0.4), 0 0 0 3px rgba(139, 92, 246, 0.2); }
+  textarea { resize: vertical; }
+  .send-btn {
+    font-family: inherit; font-weight: 900; font-size: 14px; cursor: pointer; border: none;
+    padding: 15px; border-radius: 12px; color: #fff;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    box-shadow: 0 6px 0 #3b2a86, 0 16px 30px rgba(139, 92, 246, 0.35);
+    transition: transform .1s, box-shadow .1s;
+  }
+  .send-btn:hover { transform: translateY(2px); box-shadow: 0 4px 0 #3b2a86, 0 12px 24px rgba(139, 92, 246, 0.35); }
+  .send-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #3b2a86, 0 8px 16px rgba(139, 92, 246, 0.3); }
+  @media (max-width: 840px) { .contact-panel { grid-template-columns: 1fr; padding: 34px; } }
+
+  footer { position: relative; z-index: 1; text-align: center; color: var(--muted); font-size: 13px; padding: 44px 0; }
+  footer b { background: linear-gradient(90deg, var(--violet), var(--cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cube, .deep, .portrait-card, .chip3d { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<nav class="nav">
+  <span class="brand">&lt;Bidhan/&gt;</span>
+  <a class="link" href="#home">Home</a>
+  <a class="link" href="#projects">Projects</a>
+  <a class="link" href="#experience">Experience</a>
+  <a class="link" href="#contact">Contact</a>
+</nav>
+
+<header id="home" class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <span class="eyebrow">CS Student · Arlington, TX</span>
+      <h1><span class="flat">Hi, I'm</span><br/><span class="deep">Bidhan.</span></h1>
+      <p>I am a <span class="hl v">Computer Science student</span> at University of Texas at Arlington with a passion for <span class="hl">Machine Learning</span> and <span class="hl v">Software Development</span>. I like building web applications and learning new technologies.</p>
+      <div class="cta-row">
+        <a class="btn" href="#projects">See Projects</a>
+        <a class="btn cyan" href="#contact">Contact Me</a>
+      </div>
+      <div class="social-row">
+        <a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">Twitter</a>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="cube-wrap">
+        <div class="cube">
+          <div class="face">ML</div>
+          <div class="face">React</div>
+          <div class="face">Java</div>
+          <div class="face">Python</div>
+          <div class="face">C++</div>
+          <div class="face">Node</div>
+        </div>
+      </div>
+      <div class="portrait-card tilt">
+        <span class="chip3d c1">Machine Learning</span>
+        <span class="chip3d c2">Full-Stack Dev</span>
+        <span class="chip3d c3">GPA 3.5</span>
+        <div class="frame"><img src="../public/assets/Headshot_half_body.png" alt="Bidhan Khadka" /></div>
+        <div class="cap"><b>bidhan.obj</b> — rendered in real life</div>
+        <div class="glare"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="projects" class="section">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Projects</h2>
+      <p>A collection of projects where I experimented, learned, and delivered — move your cursor over a card.</p>
+    </div>
+    <div class="grid">
+      <article class="pcard tilt">
+        <div class="glare"></div>
+        <div class="pmedia"><img src="../public/assets/rarify.png" alt="Rarify" /></div>
+        <div class="pbody">
+          <h3>Rarify</h3>
+          <p>A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles. Built with Jetpack Compose and Material 3, with admin moderation tools and persisted light/dark themes.</p>
+          <div class="tags"><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span><span class="tag">Material 3</span><span class="tag">SQLite</span></div>
+          <div class="plinks"><a href="#">GitHub ↗</a></div>
+        </div>
+      </article>
+      <article class="pcard tilt">
+        <div class="glare"></div>
+        <div class="pmedia"><img src="../public/assets/binaryclassification.png" alt="Software Defect Classifier" /></div>
+        <div class="pbody">
+          <h3>Software Defect Classifier</h3>
+          <p>A Kaggle binary-classification project that predicts whether a C code module contains a software defect from its complexity metrics. Class-balanced Random Forest with RobustScaler preprocessing — ~0.79 ROC-AUC on the validation split.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">pandas</span><span class="tag">Matplotlib</span></div>
+          <div class="plinks"><a href="#">GitHub ↗</a></div>
+        </div>
+      </article>
+      <article class="pcard tilt">
+        <div class="glare"></div>
+        <div class="pmedia"><img src="../public/assets/fitjournal.png" alt="FitJournal" /></div>
+        <div class="pbody">
+          <h3>FitJournal</h3>
+          <p>A full-stack MERN fitness tracker for logging workouts by exercise name, reps, and weight. Complete CRUD over a REST API with global state managed through React Context and Hooks. MongoDB + Mongoose behind a clean, responsive UI.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">Express</span><span class="tag">MongoDB</span></div>
+          <div class="plinks"><a href="#">GitHub ↗</a></div>
+        </div>
+      </article>
+      <article class="pcard tilt">
+        <div class="glare"></div>
+        <div class="pmedia"><img src="../public/assets/persona.png" alt="PersonaAI" /></div>
+        <div class="pbody">
+          <h3>PersonaAI</h3>
+          <p>A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth. React frontend talking to an Express /chat backend — real-time replies with full conversation history.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Express</span><span class="tag">Gemini API</span></div>
+          <div class="plinks"><a href="#">GitHub ↗</a></div>
+        </div>
+      </article>
+      <article class="pcard tilt">
+        <div class="glare"></div>
+        <div class="pmedia"><img src="../public/assets/genetic.png" alt="Genetic Algorithm" /></div>
+        <div class="pbody">
+          <h3>Genetic Algorithm</h3>
+          <p>A Java genetic algorithm that evolves a population of random character strings toward a target phrase. Elitist selection, single-point crossover, and rate-based mutation across generations — clean object-oriented design.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">OOP</span></div>
+          <div class="plinks"><a href="#">GitHub ↗</a></div>
+        </div>
+      </article>
+      <article class="pcard tilt">
+        <div class="glare"></div>
+        <div class="pmedia"><img src="../public/assets/flappy.png" alt="Event-Driven Game" /></div>
+        <div class="pbody">
+          <h3>Event-Driven Game</h3>
+          <p>A Java Swing recreation of Flappy Bird with custom-rendered bird, pipes, and scrolling background. Swing Timer game loop with KeyListener input, real-time collision detection, live score tracking, and instant restart.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+          <div class="plinks"><a href="#">GitHub ↗</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="section">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Experience</h2>
+      <p>Organizations and teams I've been fortunate to work with.</p>
+    </div>
+    <div class="exp-list">
+      <article class="exp-card tilt">
+        <div>
+          <div class="exp-role">STEM Learning Facilitator</div>
+          <div class="exp-org">University of Texas at Arlington</div>
+          <p class="exp-desc">Led weekly Pre-Calculus sessions for 16–20 students; boosted scores by 10–15%. Created 30+ lesson plans and problem sets for 50+ students overall. Used data to improve instruction and coordinated with faculty to streamline resources.</p>
+        </div>
+        <div class="exp-meta"><span class="pill">May 2024 – Present</span><br/><span class="pill">Arlington, TX</span></div>
+      </article>
+      <article class="exp-card tilt">
+        <div>
+          <div class="exp-role">Project Development Manager</div>
+          <div class="exp-org">SCAI at UTA</div>
+          <p class="exp-desc">Directed project pipeline: idea intake, documentation, progress tracking. Defined deadlines and milestones, monitored status, facilitated delivery, and coordinated members to keep participation steady.</p>
+        </div>
+        <div class="exp-meta"><span class="pill">June 2025 – Present</span><br/><span class="pill">Arlington, TX</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Get in touch</h2>
+      <p>Have a question or want to work together?</p>
+    </div>
+    <div class="contact-panel">
+      <div>
+        <p class="contact-lead">I'm always open to discussing new projects, internship opportunities, or just chatting about tech. Drop me a line!</p>
+        <div class="contact-email"><span>✉</span>bidhankhadka437@gmail.com</div>
+      </div>
+      <form onsubmit="return false">
+        <div class="row"><input placeholder="Your name" /><input placeholder="Your email" /></div>
+        <input placeholder="Subject" />
+        <textarea rows="5" placeholder="Your message"></textarea>
+        <button class="send-btn">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 <b>Bidhan Khadka</b> · Built with React</footer>
+
+<script>
+  // Pointer tilt: cards rotate toward the cursor; glare follows it.
+  const MAX_TILT = 7; // degrees
+  document.querySelectorAll('.tilt').forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;   // 0..1
+      const py = (e.clientY - r.top) / r.height;   // 0..1
+      const rx = (0.5 - py) * MAX_TILT * 2;
+      const ry = (px - 0.5) * MAX_TILT * 2;
+      el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      el.style.setProperty('--gx', (px * 100) + '%');
+      el.style.setProperty('--gy', (py * 100) + '%');
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+  });
+</script>
+
+</body>
+</html>

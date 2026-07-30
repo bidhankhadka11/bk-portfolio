@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Portfolio Design Mockups</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0a; color: #dadada; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 48px 24px; gap: 40px;
+  }
+  h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: #fff; }
+  h1 span { color: #ffc04c; }
+  .sub { color: #a3a3a3; font-size: 15px; margin-top: 8px; text-align: center; max-width: 560px; line-height: 1.6; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; width: 100%; }
+  @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+  a.card {
+    display: block; text-decoration: none; color: inherit;
+    background: #111; border: 1px solid #222; border-radius: 16px;
+    padding: 28px; transition: all .2s;
+  }
+  a.card:hover { border-color: rgba(255,192,76,0.45); transform: translateY(-3px); }
+  .swatch { display: flex; gap: 6px; margin-bottom: 18px; }
+  .swatch i { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); }
+  a.card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+  a.card p { font-size: 13.5px; color: #a3a3a3; line-height: 1.6; }
+  a.card .tagline { display: inline-block; margin-top: 14px; font-size: 12px; font-weight: 600; color: #ffc04c; }
+</style>
+</head>
+<body>
+  <div style="text-align:center">
+    <h1>Portfolio <span>Design Mockups</span></h1>
+    <p class="sub">Eleven static explorations of the portfolio UI. Same content as the live site — different visual treatments. 1–3 stay close to the original; 4–6 go wild; 7–10 riff on the Terminal; 11 goes 3D. Click one to view the full page.</p>
+  </div>
+  <div class="cards">
+    <a class="card" href="1-soft-glass.html">
+      <div class="swatch"><i style="background:#050505"></i><i style="background:rgba(255,255,255,0.06)"></i><i style="background:#ffc04c"></i></div>
+      <h2>1 · Soft Glass</h2>
+      <p>Drops the hard 1px frame for a floating pill nav, rounded glassy cards with gaps, amber radial glows behind the hero, and pill-shaped tags/buttons. Same dark + amber palette, softer feel.</p>
+      <span class="tagline">Rounded · Glowy · Modern SaaS</span>
+    </a>
+    <a class="card" href="2-light-editorial.html">
+      <div class="swatch"><i style="background:#faf7f2"></i><i style="background:#ffffff"></i><i style="background:#d97706"></i></div>
+      <h2>2 · Light Editorial</h2>
+      <p>Keeps the signature frame lines and tiled 1px project grid, but flips to a warm paper background with serif display headings, numbered sections, and underline-style form fields.</p>
+      <span class="tagline">Paper · Serif · Magazine</span>
+    </a>
+    <a class="card" href="3-midnight-gradient.html">
+      <div class="swatch"><i style="background:#07090f"></i><i style="background:#10131d"></i><i style="background:linear-gradient(90deg,#ffc04c,#ff5f8f,#4cb8ff)"></i></div>
+      <h2>3 · Midnight Gradient</h2>
+      <p>Closest to the current site: keeps the frame, marquee, and layout, but shifts to a blue-tinted dark palette and leans into the multi-color gradient — gradient nav line, always-on card edges, gradient CTAs.</p>
+      <span class="tagline">Frame kept · Gradient-forward</span>
+    </a>
+    <a class="card" href="4-terminal.html">
+      <div class="swatch"><i style="background:#050805"></i><i style="background:#0a120c"></i><i style="background:#4af26c"></i></div>
+      <h2>4 · Terminal</h2>
+      <p>Full CRT hacker aesthetic: green phosphor monospace, scanlines and flicker, ASCII-art name, projects as terminal file windows (screenshots tinted green until hover), experience as a log, and a command-prompt contact form.</p>
+      <span class="tagline">Monospace · Scanlines · bidhan@uta:~$</span>
+    </a>
+    <a class="card" href="5-brutalist.html">
+      <div class="swatch"><i style="background:#f3efe4"></i><i style="background:#ffd83d"></i><i style="background:#ff90e8"></i></div>
+      <h2>5 · Neo-Brutalist</h2>
+      <p>Loud and playful: thick black borders, hard offset shadows, giant outlined uppercase type, rotated stickers and badges, candy accent blocks, and a scrolling skills band. Everything shoves and snaps on hover.</p>
+      <span class="tagline">Thick borders · Stickers · Loud</span>
+    </a>
+    <a class="card" href="6-synthwave.html">
+      <div class="swatch"><i style="background:#10041f"></i><i style="background:#ff2fb3"></i><i style="background:#00e5ff"></i></div>
+      <h2>6 · Synthwave</h2>
+      <p>Retro-future sunset: striped neon sun, twinkling stars, an animated perspective grid floor racing under the hero, chrome-gradient italic type, chamfered neon cards, and a glowing "Transmit" contact form.</p>
+      <span class="tagline">Neon · Grid floor · 1986</span>
+    </a>
+    <a class="card" href="7-amber-neofetch.html">
+      <div class="swatch"><i style="background:#0c0700"></i><i style="background:#150d02"></i><i style="background:#ffb000"></i></div>
+      <h2>7 · Amber CRT / neofetch</h2>
+      <p>Warm amber phosphor instead of green. The hero is a neofetch system readout — your headshot rendered as a dithered amber "8-bit portrait" (hover to develop it into color) beside OS-style specs. Double-border TUI project boxes, a man-page for experience, and a pine mail composer.</p>
+      <span class="tagline">Amber glow · neofetch · man bidhan</span>
+    </a>
+    <a class="card" href="8-editor-tmux.html">
+      <div class="swatch"><i style="background:#16161e"></i><i style="background:#1a1b26"></i><i style="background:#7aa2f7"></i></div>
+      <h2>8 · Editor / tmux</h2>
+      <p>A modern dev setup in Tokyo Night colors: editor tabs up top, a vim statusline pinned to the bottom, and a split hero — your profile as syntax-highlighted JS on the left, your headshot in an image-preview pane on the right. Projects are tmux panes, experience is a git log.</p>
+      <span class="tagline">Tokyo Night · Panes · git log</span>
+    </a>
+    <a class="card" href="9-bios-dos.html">
+      <div class="swatch"><i style="background:#040404"></i><i style="background:#0000a8"></i><i style="background:#55ffff"></i></div>
+      <h2>9 · BIOS Boot / DOS</h2>
+      <p>A PC booting up in 1994: BIOS POST lines that appear one by one ("Detecting Passion Master... MACHINE LEARNING"), a cyan ASCII banner, Norton-Commander blue project panels with F3 VIEW badges, a DOS setup dialog for contact, and a function-key bar pinned at the bottom.</p>
+      <span class="tagline">POST screen · NC blue · F-keys</span>
+    </a>
+    <a class="card" href="10-terminal-v2.html">
+      <div class="swatch"><i style="background:#050805"></i><i style="background:#0a120c"></i><i style="background:#4af26c"></i></div>
+      <h2>10 · Terminal V2</h2>
+      <p>The green Terminal, upgraded: identical everywhere, plus the framed dithered portrait from the Amber mockup sitting in the hero's free right space — recolored to green phosphor, with the same hover-to-develop effect.</p>
+      <span class="tagline">Terminal + phosphor portrait</span>
+    </a>
+    <a class="card" href="11-dimension-3d.html">
+      <div class="swatch"><i style="background:#0e0f1e"></i><i style="background:#8b5cf6"></i><i style="background:#22d3ee"></i></div>
+      <h2>11 · Dimension (3D)</h2>
+      <p>Real depth everywhere: cards physically tilt toward your cursor with a moving glare, extruded 3D headline, a spinning tech cube orbiting your floating portrait card, press-down chunky buttons, and layered elements that pop off each card in 3D space.</p>
+      <span class="tagline">Tilt cards · Extruded text · Spinning cube</span>
+    </a>
+  </div>
+</body>
+</html>

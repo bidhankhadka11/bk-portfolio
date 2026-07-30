@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 8 — Editor / tmux (Tokyo Night)</title>
+<style>
+  :root {
+    --bg: #16161e;
+    --panel: #1a1b26;
+    --panel-2: #1f2335;
+    --line: #292e42;
+    --fg: #c0caf5;
+    --comment: #565f89;
+    --blue: #7aa2f7;
+    --cyan: #7dcfff;
+    --green: #9ece6a;
+    --magenta: #bb9af7;
+    --red: #f7768e;
+    --yellow: #e0af68;
+    --orange: #ff9e64;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+    background: var(--bg); color: var(--fg); line-height: 1.65; font-size: 13.5px;
+    overflow-x: hidden; padding-bottom: 34px;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: #33467c; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* Tab bar (nav) */
+  .tabbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .tabbar .inner { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: stretch; height: 44px; }
+  .tab {
+    display: flex; align-items: center; gap: 8px; padding: 0 18px; font-size: 12.5px;
+    color: var(--comment); border-right: 1px solid var(--line); transition: all .12s;
+  }
+  .tab:first-child { border-left: 1px solid var(--line); }
+  .tab .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--comment); }
+  .tab:hover { color: var(--fg); background: var(--panel-2); }
+  .tab.active { color: var(--fg); background: var(--panel); box-shadow: inset 0 2px 0 var(--blue); }
+  .tab.active .dot { background: var(--green); }
+  .tabbar .right { margin-left: auto; display: flex; align-items: center; color: var(--comment); font-size: 12px; gap: 14px; }
+
+  /* tmux-style pane */
+  .pane { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; overflow: hidden; }
+  .pane-title {
+    display: flex; align-items: center; gap: 10px; padding: 7px 14px;
+    background: var(--panel-2); border-bottom: 1px solid var(--line);
+    color: var(--comment); font-size: 12px;
+  }
+  .pane-title .idx { color: var(--blue); font-weight: 700; }
+  .pane-title .zoom { margin-left: auto; color: var(--comment); }
+
+  /* HERO — split panes: code left, image preview right */
+  .hero { padding: 92px 0 56px; }
+  .hero-panes { display: flex; gap: 14px; align-items: stretch; }
+  @media (max-width: 980px) { .hero-panes { flex-direction: column; } }
+  .hero-code { flex: 1.25; min-width: 0; }
+  .code { padding: 18px 0; overflow-x: auto; }
+  .cl { display: flex; white-space: pre; }
+  .cl .ln { width: 44px; flex-shrink: 0; text-align: right; padding-right: 16px; color: #3b4261; user-select: none; }
+  .k { color: var(--magenta); }        /* keyword */
+  .v { color: var(--blue); }           /* variable */
+  .s { color: var(--green); }          /* string */
+  .p { color: var(--yellow); }         /* property */
+  .c { color: var(--comment); font-style: italic; }
+  .b { color: var(--orange); }         /* boolean/number */
+  .pn { color: var(--cyan); }          /* punctuation-ish */
+  .cursor-line { background: rgba(122, 162, 247, 0.07); box-shadow: inset 2px 0 0 var(--blue); }
+  .caret { display: inline-block; width: 8px; height: 17px; background: var(--blue); vertical-align: -3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-preview { flex: 1; display: flex; flex-direction: column; }
+  .preview-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 22px;
+    background:
+      linear-gradient(45deg, #1c1d2a 25%, transparent 25%, transparent 75%, #1c1d2a 75%),
+      linear-gradient(45deg, #1c1d2a 25%, transparent 25%, transparent 75%, #1c1d2a 75%);
+    background-position: 0 0, 10px 10px; background-size: 20px 20px; background-color: var(--panel);
+  }
+  .preview-body img { max-height: 380px; width: auto; max-width: 100%; display: block; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.6)); }
+  .preview-foot { padding: 8px 14px; border-top: 1px solid var(--line); color: var(--comment); font-size: 11.5px; display: flex; justify-content: space-between; }
+  .preview-foot b { color: var(--cyan); font-weight: 400; }
+
+  .hero-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+  .btn {
+    font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+    padding: 9px 18px; border-radius: 5px; border: 1px solid transparent; transition: all .15s;
+    background: var(--blue); color: #16161e;
+  }
+  .btn:hover { background: var(--cyan); }
+  .btn.secondary { background: transparent; color: var(--blue); border-color: var(--blue); }
+  .btn.secondary:hover { background: rgba(122, 162, 247, 0.12); }
+  .btn.ghost { background: transparent; color: var(--comment); border-color: var(--line); }
+  .btn.ghost:hover { color: var(--fg); border-color: var(--comment); }
+
+  /* Sections */
+  .section { padding: 54px 0; }
+  .sec-label { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .sec-label .kw { color: var(--magenta); font-style: italic; }
+  .sec-label .name { color: var(--blue); font-weight: 700; font-size: 17px; }
+  .sec-label .cm { color: var(--comment); font-style: italic; font-size: 12.5px; }
+
+  /* Projects — 2-col pane grid */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .pcard { display: flex; flex-direction: column; transition: all .18s; }
+  .pcard:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue), 0 8px 30px rgba(0,0,0,0.4); transform: translateY(-2px); }
+  .pcard:hover .pane-title { color: var(--fg); }
+  .pmedia { height: 235px; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .pmedia img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .35s; }
+  .pcard:hover .pmedia img { transform: scale(1.04); }
+  .pbody { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+  .pbody p { color: var(--comment); font-size: 12.5px; flex: 1; font-style: normal; }
+  .pbody p::before { content: "// "; }
+  .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+  .tag { font-size: 11px; color: var(--magenta); background: rgba(187, 154, 247, 0.1); border: 1px solid rgba(187, 154, 247, 0.3); padding: 1px 8px; border-radius: 4px; }
+  .plinks { margin-top: 12px; display: flex; gap: 10px; }
+  .plinks a { color: var(--green); font-size: 12px; font-weight: 700; }
+  .plinks a::before { content: "❯ "; color: var(--comment); }
+  .plinks a:hover { text-decoration: underline; }
+
+  /* Experience — git log */
+  .gitlog { padding: 20px 24px; }
+  .commit { display: flex; gap: 18px; padding: 16px 0; }
+  .commit + .commit { border-top: 1px dashed var(--line); }
+  .graph { color: var(--red); flex-shrink: 0; width: 14px; text-align: center; }
+  .commit-info { min-width: 0; }
+  .hashline { font-size: 12.5px; margin-bottom: 4px; }
+  .hash { color: var(--yellow); }
+  .refs { color: var(--cyan); }
+  .refs .head { color: var(--green); }
+  .commit-msg { color: var(--fg); font-weight: 700; font-size: 15px; }
+  .commit-org { color: var(--magenta); font-size: 13px; margin: 2px 0 8px; }
+  .commit-meta { color: var(--comment); font-size: 12px; margin-bottom: 8px; }
+  .commit-body { color: var(--comment); font-size: 12.5px; line-height: 1.7; max-width: 700px; }
+
+  /* Contact — REPL */
+  .repl-body { padding: 22px 26px; }
+  .repl-line { color: var(--comment); margin-bottom: 16px; font-size: 12.5px; }
+  .repl-line .pr { color: var(--green); }
+  .repl-line .fn { color: var(--blue); }
+  .repl-line .st { color: var(--green); }
+  form { display: grid; gap: 12px; max-width: 640px; }
+  .frow { display: flex; gap: 12px; } .frow > * { flex: 1; }
+  input, textarea {
+    background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 5px;
+    padding: 10px 13px; font-size: 13px; font-family: inherit; width: 100%; transition: all .12s;
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2); }
+  textarea { resize: vertical; }
+  .send-btn {
+    font-family: inherit; cursor: pointer; font-weight: 700; font-size: 13px;
+    background: var(--green); color: #16161e; border: none; border-radius: 5px; padding: 11px; transition: all .15s;
+  }
+  .send-btn:hover { background: #b9f27c; }
+
+  /* Statusline (fixed bottom) */
+  .statusline {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; height: 30px;
+    display: flex; align-items: stretch; font-size: 12px; background: var(--panel-2); border-top: 1px solid var(--line);
+  }
+  .statusline .seg { display: flex; align-items: center; padding: 0 14px; gap: 6px; }
+  .seg.mode { background: var(--blue); color: #16161e; font-weight: 700; }
+  .seg.branch { background: var(--line); color: var(--magenta); }
+  .seg.file { color: var(--comment); }
+  .statusline .spacer { flex: 1; }
+  .seg.pos { background: var(--line); color: var(--cyan); }
+  .seg.lang { background: var(--blue); color: #16161e; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<nav class="tabbar">
+  <div class="inner">
+    <a class="tab active" href="#home"><span class="dot"></span>resume-data.js</a>
+    <a class="tab" href="#projects"><span class="dot"></span>projects/</a>
+    <a class="tab" href="#experience"><span class="dot"></span>git log</a>
+    <a class="tab" href="#contact"><span class="dot"></span>contact.repl</a>
+    <div class="right"><span>⌘K</span><span>bidhan · main</span></div>
+  </div>
+</nav>
+
+<header id="home" class="hero">
+  <div class="container">
+    <div class="hero-panes">
+      <div class="pane hero-code">
+        <div class="pane-title"><span class="idx">0:1</span> ~/portfolio/src/resume-data.js <span class="zoom">— NORMAL —</span></div>
+        <div class="code">
+          <div class="cl"><span class="ln">1</span><span><span class="c">// Hi, I'm Bidhan — welcome to my portfolio</span></span></div>
+          <div class="cl"><span class="ln">2</span><span><span class="k">const</span> <span class="v">profile</span> <span class="pn">=</span> {</span></div>
+          <div class="cl"><span class="ln">3</span><span>  <span class="p">name</span>: <span class="s">"Bidhan Khadka"</span>,</span></div>
+          <div class="cl"><span class="ln">4</span><span>  <span class="p">title</span>: <span class="s">"Computer Science @ UTA"</span>,</span></div>
+          <div class="cl"><span class="ln">5</span><span>  <span class="p">passions</span>: [<span class="s">"Machine Learning"</span>, <span class="s">"Software Development"</span>],</span></div>
+          <div class="cl"><span class="ln">6</span><span>  <span class="p">about</span>: <span class="s">"I like building web applications and</span></span></div>
+          <div class="cl"><span class="ln">7</span><span>          <span class="s">learning new technologies."</span>,</span></div>
+          <div class="cl"><span class="ln">8</span><span>  <span class="p">location</span>: <span class="s">"Arlington, TX"</span>,</span></div>
+          <div class="cl"><span class="ln">9</span><span>  <span class="p">education</span>: {</span></div>
+          <div class="cl"><span class="ln">10</span><span>    <span class="p">school</span>: <span class="s">"UT Arlington"</span>, <span class="p">gpa</span>: <span class="b">3.5</span>,</span></div>
+          <div class="cl"><span class="ln">11</span><span>    <span class="p">honors</span>: [<span class="s">"Maverick Academic Scholar"</span>, <span class="s">"Honors College"</span>],</span></div>
+          <div class="cl"><span class="ln">12</span><span>  },</span></div>
+          <div class="cl"><span class="ln">13</span><span>  <span class="p">openToInternships</span>: <span class="b">true</span>,</span></div>
+          <div class="cl"><span class="ln">14</span><span>  <span class="p">email</span>: <span class="s">"bidhankhadka437@gmail.com"</span>,</span></div>
+          <div class="cl"><span class="ln">15</span><span>  <span class="p">links</span>: { <span class="p">github</span>, <span class="p">linkedin</span>, <span class="p">twitter</span> },</span></div>
+          <div class="cl cursor-line"><span class="ln">16</span><span>}<span class="caret"></span></span></div>
+          <div class="cl"><span class="ln">17</span><span><span class="k">export default</span> <span class="v">profile</span> <span class="c">// scroll for more ↓</span></span></div>
+        </div>
+      </div>
+      <div class="pane hero-preview">
+        <div class="pane-title"><span class="idx">0:2</span> preview — headshot.png</div>
+        <div class="preview-body">
+          <img src="../public/assets/Headshot_half_body.png" alt="Bidhan Khadka" />
+        </div>
+        <div class="preview-foot"><span><b>PNG</b> · RGBA</span><span>zoom: fit</span></div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a class="btn" href="#projects">:open projects/</a>
+      <a class="btn secondary" href="#contact">:compose message</a>
+      <a class="btn ghost" href="#">github</a>
+      <a class="btn ghost" href="#">linkedin</a>
+      <a class="btn ghost" href="#">twitter</a>
+    </div>
+  </div>
+</header>
+
+<section id="projects" class="section">
+  <div class="container">
+    <div class="sec-label"><span class="kw">const</span><span class="name">projects</span><span class="cm">// where I experimented, learned, and delivered</span></div>
+    <div class="grid">
+      <article class="pane pcard">
+        <div class="pane-title"><span class="idx">1:1</span> ~/projects/rarify — kotlin</div>
+        <div class="pmedia"><img src="../public/assets/rarify.png" alt="Rarify" /></div>
+        <div class="pbody">
+          <p>Native Android marketplace for rare collectibles — one account switches between buyer, seller, and admin roles. Jetpack Compose + Material 3, admin moderation, themes persisted via DataStore.</p>
+          <div class="tags"><span class="tag">Kotlin</span><span class="tag">Compose</span><span class="tag">Material 3</span><span class="tag">SQLite</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pane pcard">
+        <div class="pane-title"><span class="idx">1:2</span> ~/projects/defect-classifier — python</div>
+        <div class="pmedia"><img src="../public/assets/binaryclassification.png" alt="Defect Classifier" /></div>
+        <div class="pbody">
+          <p>Kaggle binary classifier predicting software defects in C modules from complexity metrics. Class-balanced Random Forest (200 trees) + RobustScaler — ~0.79 ROC-AUC on validation.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">pandas</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pane pcard">
+        <div class="pane-title"><span class="idx">1:3</span> ~/projects/fitjournal — node</div>
+        <div class="pmedia"><img src="../public/assets/fitjournal.png" alt="FitJournal" /></div>
+        <div class="pbody">
+          <p>Full-stack MERN fitness tracker logging workouts by exercise, reps, and weight. Complete CRUD over a REST API; global state via React Context + Hooks; MongoDB + Mongoose.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">Express</span><span class="tag">MongoDB</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pane pcard">
+        <div class="pane-title"><span class="idx">1:4</span> ~/projects/persona-ai — node</div>
+        <div class="pmedia"><img src="../public/assets/persona.png" alt="PersonaAI" /></div>
+        <div class="pbody">
+          <p>Conversational AI chatbot on Gemini API with selectable personalities (Neko, Shadow, Sloth). React frontend → Express /chat backend; real-time replies with full history.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Express</span><span class="tag">Gemini API</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pane pcard">
+        <div class="pane-title"><span class="idx">1:5</span> ~/projects/genetic-algorithm — java</div>
+        <div class="pmedia"><img src="../public/assets/genetic.png" alt="Genetic Algorithm" /></div>
+        <div class="pbody">
+          <p>Java genetic algorithm evolving random strings toward a target phrase. Elitist selection, single-point crossover, rate-based mutation — clean OO design.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">OOP</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pane pcard">
+        <div class="pane-title"><span class="idx">1:6</span> ~/projects/flappy-swing — java</div>
+        <div class="pmedia"><img src="../public/assets/flappy.png" alt="Event-Driven Game" /></div>
+        <div class="pbody">
+          <p>Java Swing recreation of Flappy Bird with custom-rendered sprites. Swing Timer game loop, KeyListener input, real-time collision detection, live score, instant restart.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="section">
+  <div class="container">
+    <div class="sec-label"><span class="kw">$</span><span class="name">git log --experience</span><span class="cm">// organizations and teams I've worked with</span></div>
+    <div class="pane">
+      <div class="pane-title"><span class="idx">2:1</span> git log — 2 commits, both still in progress</div>
+      <div class="gitlog">
+        <div class="commit">
+          <div class="graph">●</div>
+          <div class="commit-info">
+            <div class="hashline"><span class="hash">a3f92c1</span> <span class="refs">(<span class="head">HEAD → present</span>, origin/scai)</span></div>
+            <div class="commit-msg">Project Development Manager</div>
+            <div class="commit-org">SCAI at UTA</div>
+            <div class="commit-meta">Date: June 2025 – Present · Arlington, TX</div>
+            <div class="commit-body">Directed project pipeline: idea intake, documentation, progress tracking. Defined deadlines and milestones, monitored status, facilitated delivery, and coordinated members to keep participation steady.</div>
+          </div>
+        </div>
+        <div class="commit">
+          <div class="graph">●</div>
+          <div class="commit-info">
+            <div class="hashline"><span class="hash">7b04e88</span> <span class="refs">(origin/uta)</span></div>
+            <div class="commit-msg">STEM Learning Facilitator</div>
+            <div class="commit-org">University of Texas at Arlington</div>
+            <div class="commit-meta">Date: May 2024 – Present · Arlington, TX</div>
+            <div class="commit-body">Led weekly Pre-Calculus sessions for 16–20 students; boosted scores by 10–15%. Created 30+ lesson plans and problem sets for 50+ students. Used attendance, performance, and feedback data to improve instruction; coordinated with faculty to streamline resources.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <div class="container">
+    <div class="sec-label"><span class="kw">await</span><span class="name">contact()</span><span class="cm">// have a question or want to work together?</span></div>
+    <div class="pane">
+      <div class="pane-title"><span class="idx">3:1</span> node — contact.repl</div>
+      <div class="repl-body">
+        <div class="repl-line"><span class="pr">❯</span> <span class="fn">sendMessage</span>({ to: <span class="st">"bidhankhadka437@gmail.com"</span> }) <span style="color:var(--comment)">// I'm always open to new projects, internships, or tech talk</span></div>
+        <form onsubmit="return false">
+          <div class="frow"><input placeholder="name:" /><input placeholder="email:" /></div>
+          <input placeholder="subject:" />
+          <textarea rows="4" placeholder="message:"></textarea>
+          <button class="send-btn">⏎ await send()</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="statusline">
+  <div class="seg mode">NORMAL</div>
+  <div class="seg branch"> main</div>
+  <div class="seg file">~/portfolio · © 2026 Bidhan Khadka</div>
+  <div class="spacer"></div>
+  <div class="seg pos">Ln 16, Col 2</div>
+  <div class="seg lang">UTF-8 · JS</div>
+</div>
+
+</body>
+</html>

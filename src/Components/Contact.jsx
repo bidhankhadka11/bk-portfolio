@@ -1,5 +1,4 @@
 import React from 'react'
-import { FiGithub, FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi'
 
 export default function Contact({ email, links = {} }) {
   const [status, setStatus] = React.useState(null)
@@ -10,10 +9,10 @@ export default function Contact({ email, links = {} }) {
     const form = e.currentTarget
     const data = Object.fromEntries(new FormData(form).entries())
 
-    // If you add EmailJS (client-only), handle it here (or keep mailto only)
-    const mailto = `mailto:${email}?subject=Portfolio contact from ${encodeURIComponent(
-      data.name
-    )}&body=${encodeURIComponent(data.message + '\n\nFrom: ' + data.email)}`
+    const subject = data.subject || `Portfolio contact from ${data.name}`
+    const mailto = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(data.message + '\n\nFrom: ' + data.name + ' <' + data.email + '>')}`
     window.location.href = mailto
     setStatus('opened')
     form.reset()
@@ -22,46 +21,34 @@ export default function Contact({ email, links = {} }) {
   return (
     <section id="contact" className="section contact">
       <div className="container">
-        <h2>Contact Me</h2>
-        <p>Let's get in touch</p>
-
-        <div className="contact-grid">
-          <div className="contact-info">
-            <p className="contact-lead">
-              Have a question, an opportunity, or just want to say hi? Drop a
-              message and I'll get back to you.
-            </p>
-            {email && (
-              <a className="contact-email" href={`mailto:${email}`}>
-                <FiMail />
-                <span>{email}</span>
-              </a>
-            )}
-            <div className="social-row">
-              {links.github && (
-                <a className="social-link" href={links.github} target="_blank" rel="noreferrer" aria-label="GitHub"><FiGithub /></a>
-              )}
-              {links.linkedin && (
-                <a className="social-link" href={links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a>
-              )}
-              {links.twitter && (
-                <a className="social-link" href={links.twitter} target="_blank" rel="noreferrer" aria-label="Twitter"><FiTwitter /></a>
-              )}
-            </div>
-          </div>
-
+        <div className="sec-cmd">
+          <span className="u">bidhan@uta</span>:<span className="h">~/portfolio</span>$ <span className="cmd">./contact_me.sh --interactive</span>
+        </div>
+        <div className="contact-box">
+          <p className="out">
+            Opening secure channel... always happy to discuss <span className="hl">new projects</span>, <span className="hl">internships</span>, or just tech.<br />
+            Direct line: <a className="glow" href={`mailto:${email}`}>{email}</a>
+          </p>
           <form onSubmit={onSubmit}>
-            <div className="row">
-              <input name="name" placeholder="Your name" required />
-              <input name="email" type="email" placeholder="Your email" required />
+            <div className="field">
+              <label htmlFor="c-name">name&nbsp;&nbsp;&nbsp;&gt;</label>
+              <input id="c-name" name="name" placeholder="_" required />
             </div>
-            <textarea name="message" rows="6" placeholder="Message" required />
-            <div className="row">
-              <button className="btn gradient-btn" type="submit">Send</button>
-              <a className="btn secondary" href={`mailto:${email}`}>Open mail app</a>
+            <div className="field">
+              <label htmlFor="c-email">email&nbsp;&nbsp;&gt;</label>
+              <input id="c-email" name="email" type="email" placeholder="_" required />
             </div>
-            {status === 'opened' && <small>✉️ Opening your email client…</small>}
+            <div className="field">
+              <label htmlFor="c-subject">subject&gt;</label>
+              <input id="c-subject" name="subject" placeholder="_" />
+            </div>
+            <div className="field">
+              <label htmlFor="c-message">message&gt;</label>
+              <textarea id="c-message" name="message" rows="4" placeholder="_" required />
+            </div>
+            <button className="send-btn" type="submit">[ transmit ]</button>
           </form>
+          {status === 'opened' && <small className="status"># opening your email client…</small>}
         </div>
       </div>
     </section>

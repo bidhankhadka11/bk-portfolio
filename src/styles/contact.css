@@ -1,149 +1,90 @@
-/* --- CONTACT --- */
-.contact-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-  margin-top: 32px;
+/* --- CONTACT — interactive prompt --- */
+.section.contact {
+  border-bottom: none;
 }
 
-.contact-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
+.contact-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 34px 38px;
+  max-width: 720px;
 }
 
-.contact-lead {
+.contact-box .out {
   color: var(--muted);
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 360px;
-  margin: 0;
-}
-
-.contact-email {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text);
-  font-size: 15px;
-  font-weight: 500;
-  transition: color 0.15s ease;
-}
-
-.contact-email svg {
-  width: 18px;
-  height: 18px;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
-.contact-email:hover {
-  color: var(--accent);
-}
-
-/* Social row reuses the hero .social-row / .social-link styles */
-.contact-info .social-row {
-  margin-top: 0;
+  margin: 0 0 22px;
 }
 
 .contact form {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   margin: 0;
+}
+
+.contact .field {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.contact .field label {
+  color: var(--green);
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .contact input,
 .contact textarea {
-  background: var(--bg);
+  flex: 1;
+  background: transparent;
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: none;
+  border-bottom: 1px dashed var(--border);
   border-radius: 0;
-  padding: 12px 14px;
-  font-size: 14px;
+  padding: 6px 2px;
+  font-size: 13.5px;
   font-family: inherit;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+  width: 100%;
+}
+
+.contact input::placeholder,
+.contact textarea::placeholder {
+  color: var(--green-dim);
+}
+
+.contact input:focus,
+.contact textarea:focus {
+  outline: none;
+  border-bottom: 1px solid var(--green);
 }
 
 .contact textarea {
   resize: vertical;
 }
 
-.contact input::placeholder,
-.contact textarea::placeholder {
-  color: rgba(163, 163, 163, 0.5);
+.send-btn {
+  margin-top: 12px;
+  justify-self: start;
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+  color: var(--green);
+  font-size: 13.5px;
+  font-weight: 700;
+  border: 1px solid var(--green);
+  padding: 10px 22px;
+  transition: all 0.15s;
 }
 
-.contact input:focus,
-.contact textarea:focus {
-  outline: none;
-  border-color: rgba(255, 192, 76, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 192, 76, 0.08);
+.send-btn:hover {
+  background: var(--green);
+  color: #04140a;
+  box-shadow: 0 0 18px rgba(74, 242, 108, 0.4);
 }
 
-.contact .row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.contact .row>* {
-  flex: 1 1 220px;
-}
-
-/* Sharp-cornered buttons to match the rectangle form fields */
-.contact .btn {
-  border-radius: 0;
-}
-
-/* Send button: slowly shifting multi-color gradient */
-.contact .gradient-btn {
-  color: #000;
-  background: linear-gradient(90deg,
-      #ffc04c,
-      #ff8a3c,
-      #ff5f8f,
-      #a855f7,
-      #4cb8ff,
-      #ffc04c);
-  background-size: 300% 100%;
-  animation: gradient-shift 8s ease infinite;
-}
-
-.contact .gradient-btn:hover {
-  opacity: 1;
-  box-shadow: 0 0 0 3px rgba(255, 192, 76, 0.2);
-}
-
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .contact .gradient-btn {
-    animation: none;
-  }
-}
-
-.contact small {
+.contact .status {
+  display: block;
+  margin-top: 14px;
   color: var(--muted);
   font-size: 12px;
-}
-
-@media (min-width: 768px) {
-  .contact-grid {
-    grid-template-columns: 0.85fr 1.15fr;
-    align-items: start;
-    gap: 56px;
-  }
 }

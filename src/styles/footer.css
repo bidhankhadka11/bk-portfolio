@@ -1,8 +1,10 @@
+/* --- FOOTER — shutdown echo line --- */
 footer {
-  padding: 40px 0;
-  text-align: center;
+  padding: 34px 0 44px;
   color: var(--muted);
-  border-top: 1px solid var(--border);
-  background: var(--page-bg);
-  font-size: 13px;
+  font-size: 12.5px;
+}
+
+footer .u {
+  color: var(--green);
 }

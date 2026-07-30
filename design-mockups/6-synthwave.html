@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 6 — Synthwave (neon retro-future)</title>
+<style>
+  :root {
+    --sky-top: #10041f;
+    --sky-mid: #2b0a4e;
+    --deep: #0b0318;
+    --panel: rgba(20, 8, 40, 0.75);
+    --pink: #ff2fb3;
+    --cyan: #00e5ff;
+    --purple: #9d5cff;
+    --gold: #ffd166;
+    --text: #efe6ff;
+    --muted: #a99cc8;
+    --border: rgba(157, 92, 255, 0.35);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    background: var(--deep); color: var(--text); line-height: 1.55; overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--pink); color: #fff; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* Nav */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(11, 3, 24, 0.75); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav::after { content: ""; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), transparent); }
+  .nav .menu { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+  .nav .brand {
+    font-weight: 900; font-size: 16px; letter-spacing: 0.14em; text-transform: uppercase; font-style: italic;
+    background: linear-gradient(180deg, var(--cyan), var(--pink));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 6px rgba(255, 47, 179, 0.6));
+  }
+  .nav .links { display: flex; gap: 6px; }
+  .nav .links a {
+    color: var(--muted); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 7px 13px; transition: all .15s;
+  }
+  .nav .links a:hover { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+
+  /* Hero — sunset sky + grid floor */
+  .hero {
+    position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 52%, #4e1668 68%, #1a0733 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .stars { position: absolute; inset: 0 0 40% 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 12% 22%, #fff, transparent),
+      radial-gradient(1px 1px at 28% 8%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 44% 30%, rgba(255,255,255,.8), transparent),
+      radial-gradient(1px 1px at 61% 12%, #fff, transparent),
+      radial-gradient(1px 1px at 74% 26%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.5px 1.5px at 88% 16%, #fff, transparent),
+      radial-gradient(1px 1px at 52% 5%, rgba(255,255,255,.9), transparent),
+      radial-gradient(1px 1px at 8% 9%, rgba(255,255,255,.8), transparent);
+    animation: twinkle 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { from { opacity: .55; } to { opacity: 1; } }
+
+  /* Neon sun with blind stripes */
+  .sun {
+    position: absolute; right: 7%; top: 16%; width: 340px; height: 340px; border-radius: 50%;
+    background: linear-gradient(180deg, var(--gold) 0%, #ff8c42 35%, var(--pink) 75%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0 55%, transparent 55% 59%, #000 59% 68%, transparent 68% 71.5%, #000 71.5% 79%, transparent 79% 82%, #000 82% 88%, transparent 88% 90.5%, #000 90.5% 100%);
+    mask-image: linear-gradient(180deg, #000 0 55%, transparent 55% 59%, #000 59% 68%, transparent 68% 71.5%, #000 71.5% 79%, transparent 79% 82%, #000 82% 88%, transparent 88% 90.5%, #000 90.5% 100%);
+    filter: drop-shadow(0 0 60px rgba(255, 47, 179, 0.55));
+    animation: sunpulse 6s ease-in-out infinite alternate;
+  }
+  @keyframes sunpulse { from { filter: drop-shadow(0 0 40px rgba(255,47,179,.45)); } to { filter: drop-shadow(0 0 80px rgba(255,47,179,.7)); } }
+
+  /* Perspective grid floor */
+  .floor {
+    position: absolute; left: -25%; right: -25%; bottom: -12%; height: 46%;
+    transform: perspective(320px) rotateX(62deg);
+    background-image:
+      linear-gradient(rgba(0, 229, 255, 0.45) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(255, 47, 179, 0.45) 2px, transparent 2px);
+    background-size: 100% 52px, 64px 100%;
+    animation: floormove 1.6s linear infinite;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%);
+    mask-image: linear-gradient(180deg, transparent, #000 30%);
+  }
+  @keyframes floormove { from { background-position: 0 0, 0 0; } to { background-position: 0 52px, 0 0; } }
+
+  .hero .container { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 30px; padding-top: 62px; }
+  .hero-text { max-width: 640px; }
+  .retro-kicker {
+    display: inline-block; color: var(--cyan); font-size: 12px; font-weight: 800;
+    letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 22px;
+    border: 1px solid rgba(0, 229, 255, 0.45); padding: 7px 16px 7px 19px;
+    box-shadow: 0 0 14px rgba(0, 229, 255, 0.25), inset 0 0 14px rgba(0, 229, 255, 0.12);
+  }
+  .hero h1 {
+    font-size: clamp(52px, 7.6vw, 96px); font-weight: 900; font-style: italic;
+    line-height: 0.98; letter-spacing: -2px; text-transform: uppercase; margin-bottom: 24px;
+  }
+  .hero h1 .l1 { display: block; color: #fff; text-shadow: 0 0 18px rgba(157, 92, 255, 0.8); }
+  .hero h1 .l2 {
+    display: block;
+    background: linear-gradient(180deg, #fff 12%, var(--cyan) 40%, var(--pink) 78%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 0 rgba(255, 47, 179, 0.45)) drop-shadow(0 0 22px rgba(255, 47, 179, 0.5));
+  }
+  .hero p { color: var(--muted); font-size: 16.5px; font-weight: 500; max-width: 540px; margin-bottom: 30px; line-height: 1.7; }
+  .hl { color: var(--cyan); font-weight: 700; text-shadow: 0 0 12px rgba(0, 229, 255, 0.55); }
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; font-weight: 800; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 13px 26px; cursor: pointer; transition: all .18s; position: relative;
+    background: linear-gradient(90deg, var(--pink), var(--purple)); color: #fff; border: none;
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    box-shadow: 0 0 24px rgba(255, 47, 179, 0.45);
+  }
+  .btn:hover { box-shadow: 0 0 40px rgba(255, 47, 179, 0.8); transform: translateY(-2px); }
+  .btn.secondary {
+    background: transparent; color: var(--cyan); border: 1px solid var(--cyan);
+    clip-path: none; box-shadow: 0 0 16px rgba(0, 229, 255, 0.25), inset 0 0 16px rgba(0, 229, 255, 0.08);
+  }
+  .btn.secondary:hover { box-shadow: 0 0 30px rgba(0, 229, 255, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.15); }
+  .social-row { display: flex; gap: 26px; margin-top: 38px; }
+  .social-row a { color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; transition: all .15s; }
+  .social-row a:hover { color: var(--pink); text-shadow: 0 0 12px var(--pink); }
+
+  .hero-figure { flex-shrink: 0; position: relative; align-self: flex-end; margin-bottom: 0; }
+  .hero-img {
+    height: clamp(300px, 58vh, 470px); width: auto; display: block; position: relative; z-index: 2;
+    filter: drop-shadow(0 0 30px rgba(157, 92, 255, 0.5)) saturate(1.1) contrast(1.05);
+  }
+  @media (max-width: 1120px) { .hero-figure, .sun { display: none; } }
+
+  /* Sections */
+  .section { padding: 92px 0; border-bottom: 1px solid var(--border); background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(157, 92, 255, 0.08), transparent 60%), var(--deep); }
+  .sec-head { text-align: center; margin-bottom: 48px; }
+  .sec-head .over { color: var(--pink); font-size: 12px; font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,47,179,0.6); }
+  .sec-head h2 {
+    font-size: clamp(38px, 5vw, 58px); font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -1px;
+    background: linear-gradient(180deg, #fff 20%, var(--cyan) 60%, var(--purple));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 18px rgba(0, 229, 255, 0.35));
+  }
+  .sec-head p { color: var(--muted); font-size: 15px; margin-top: 12px; }
+  .sec-head .rule { width: 120px; height: 2px; margin: 18px auto 0; background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), transparent); box-shadow: 0 0 12px rgba(255,47,179,0.6); }
+
+  /* Projects — neon chamfered cards */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .pcard {
+    position: relative; background: var(--panel); border: 1px solid var(--border);
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+    display: flex; flex-direction: column; transition: all .2s; backdrop-filter: blur(4px);
+  }
+  .pcard:hover { border-color: var(--cyan); box-shadow: 0 0 32px rgba(0, 229, 255, 0.25), inset 0 0 24px rgba(157, 92, 255, 0.1); transform: translateY(-4px); }
+  .pmedia { height: 250px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+  .pmedia img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: all .35s; filter: saturate(1.15) contrast(1.02); }
+  .pmedia::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,47,179,0.12), rgba(0,229,255,0.1)); mix-blend-mode: overlay; pointer-events: none; }
+  .pcard:hover .pmedia img { transform: scale(1.05); }
+  .pbody { padding: 22px 26px 24px; flex: 1; display: flex; flex-direction: column; }
+  .pbody h3 { font-size: 18px; font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 8px; color: #fff; }
+  .pcard:hover h3 { color: var(--cyan); text-shadow: 0 0 14px rgba(0, 229, 255, 0.7); }
+  .pbody p { color: var(--muted); font-size: 13px; line-height: 1.65; flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+  .tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--purple); border: 1px solid rgba(157, 92, 255, 0.45);
+    padding: 2px 9px; background: rgba(157, 92, 255, 0.08);
+  }
+  .plinks { margin-top: 14px; }
+  .plinks a {
+    color: var(--pink); font-weight: 800; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid rgba(255, 47, 179, 0.4); padding: 5px 14px; display: inline-block;
+    background: rgba(255, 47, 179, 0.07); transition: all .15s;
+  }
+  .plinks a:hover { background: rgba(255, 47, 179, 0.18); box-shadow: 0 0 16px rgba(255, 47, 179, 0.4); }
+
+  /* Experience — neon rail */
+  .exp-list { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+  .exp-card {
+    position: relative; background: var(--panel); border: 1px solid var(--border);
+    padding: 30px 36px; display: flex; justify-content: space-between; gap: 30px; transition: all .2s;
+  }
+  .exp-card::before { content: ""; position: absolute; left: 0; top: -1px; bottom: -1px; width: 3px; background: linear-gradient(180deg, var(--cyan), var(--pink)); box-shadow: 0 0 14px rgba(0, 229, 255, 0.6); }
+  .exp-card:hover { border-color: var(--pink); box-shadow: 0 0 28px rgba(255, 47, 179, 0.2); }
+  .exp-role { font-size: 19px; font-weight: 800; font-style: italic; text-transform: uppercase; color: #fff; }
+  .exp-org { color: var(--cyan); font-size: 14px; font-weight: 700; letter-spacing: 0.06em; margin-top: 4px; text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+  .exp-desc { color: var(--muted); font-size: 14px; line-height: 1.7; margin-top: 12px; max-width: 560px; }
+  .exp-meta { flex-shrink: 0; text-align: right; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 2.2; }
+  @media (max-width: 768px) { .exp-card { flex-direction: column; gap: 10px; } .exp-meta { text-align: left; } }
+
+  /* Contact */
+  .contact-wrap {
+    max-width: 880px; margin: 0 auto; background: var(--panel); border: 1px solid var(--border);
+    padding: 48px; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; position: relative;
+  }
+  .contact-wrap::before { content: ""; position: absolute; top: -1px; left: 10%; right: 10%; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), transparent); box-shadow: 0 0 14px rgba(255,47,179,0.7); }
+  .contact-lead { color: var(--muted); font-size: 14.5px; line-height: 1.75; margin-bottom: 24px; }
+  .contact-email { color: #fff; font-size: 15px; font-weight: 700; }
+  .contact-email span { color: var(--pink); margin-right: 8px; text-shadow: 0 0 10px var(--pink); }
+  form { display: grid; gap: 14px; }
+  .row { display: flex; gap: 14px; } .row > * { flex: 1; }
+  input, textarea {
+    background: rgba(11, 3, 24, 0.7); color: var(--text);
+    border: 1px solid var(--border); padding: 12px 15px; font-size: 14px; font-family: inherit; width: 100%;
+    transition: all .15s;
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 14px rgba(0, 229, 255, 0.25); }
+  textarea { resize: vertical; }
+  .send-btn {
+    font-family: inherit; cursor: pointer; font-weight: 800; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan)); background-size: 200% 100%;
+    color: #fff; border: none; padding: 14px; transition: all .2s; animation: btnshift 5s ease infinite;
+    box-shadow: 0 0 22px rgba(255, 47, 179, 0.4);
+  }
+  @keyframes btnshift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  .send-btn:hover { box-shadow: 0 0 38px rgba(0, 229, 255, 0.6); }
+  @media (max-width: 820px) { .contact-wrap { grid-template-columns: 1fr; padding: 32px; } }
+
+  footer { text-align: center; padding: 34px 0; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+  footer b { color: var(--pink); text-shadow: 0 0 10px var(--pink); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="menu">
+    <span class="brand">Bidhan.exe</span>
+    <div class="links">
+      <a href="#home">Home</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header id="home" class="hero">
+  <div class="stars"></div>
+  <div class="sun"></div>
+  <div class="floor"></div>
+  <div class="container">
+    <div class="hero-text">
+      <span class="retro-kicker">// CS Student · Arlington TX</span>
+      <h1><span class="l1">Hi, I'm</span><span class="l2">Bidhan</span></h1>
+      <p>I am a <span class="hl">Computer Science student</span> at University of Texas at Arlington with a passion for <span class="hl">Machine Learning</span> and <span class="hl">Software Development</span>. I like building web applications and learning new technologies.</p>
+      <div class="cta-row">
+        <a class="btn" href="#projects">See Projects</a>
+        <a class="btn secondary" href="#contact">Contact Me</a>
+      </div>
+      <div class="social-row">
+        <a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">Twitter</a>
+      </div>
+    </div>
+    <figure class="hero-figure">
+      <img class="hero-img" src="../public/assets/Headshot_half_body.png" alt="Bidhan Khadka" />
+    </figure>
+  </div>
+</header>
+
+<section id="projects" class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="over">// Selected Work</div>
+      <h2>Projects</h2>
+      <p>A collection of projects where I experimented, learned, and delivered</p>
+      <div class="rule"></div>
+    </div>
+    <div class="grid">
+      <article class="pcard">
+        <div class="pmedia"><img src="../public/assets/rarify.png" alt="Rarify" /></div>
+        <div class="pbody">
+          <h3>Rarify</h3>
+          <p>A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles. Built with Jetpack Compose and Material 3, with admin moderation tools and persisted light/dark themes.</p>
+          <div class="tags"><span class="tag">Kotlin</span><span class="tag">Compose</span><span class="tag">Material 3</span><span class="tag">SQLite</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pcard">
+        <div class="pmedia"><img src="../public/assets/binaryclassification.png" alt="Software Defect Classifier" /></div>
+        <div class="pbody">
+          <h3>Defect Classifier</h3>
+          <p>A Kaggle binary-classification project that predicts whether a C code module contains a software defect from its complexity metrics. Class-balanced Random Forest with RobustScaler preprocessing — ~0.79 ROC-AUC on the validation split.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">sklearn</span><span class="tag">pandas</span><span class="tag">Matplotlib</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pcard">
+        <div class="pmedia"><img src="../public/assets/fitjournal.png" alt="FitJournal" /></div>
+        <div class="pbody">
+          <h3>FitJournal</h3>
+          <p>A full-stack MERN fitness tracker for logging workouts by exercise name, reps, and weight. Complete CRUD over a REST API with global state via React Context and Hooks. MongoDB + Mongoose behind a clean, responsive UI.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">Express</span><span class="tag">MongoDB</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pcard">
+        <div class="pmedia"><img src="../public/assets/persona.png" alt="PersonaAI" /></div>
+        <div class="pbody">
+          <h3>PersonaAI</h3>
+          <p>A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth. React frontend talking to an Express /chat backend — real-time replies with full conversation history.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Express</span><span class="tag">Gemini API</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pcard">
+        <div class="pmedia"><img src="../public/assets/genetic.png" alt="Genetic Algorithm" /></div>
+        <div class="pbody">
+          <h3>Genetic Algorithm</h3>
+          <p>A Java genetic algorithm that evolves a population of random character strings toward a target phrase. Elitist selection, single-point crossover, and rate-based mutation across generations in a clean object-oriented design.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">OOP</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="pcard">
+        <div class="pmedia"><img src="../public/assets/flappy.png" alt="Event-Driven Game" /></div>
+        <div class="pbody">
+          <h3>Event-Driven Game</h3>
+          <p>A Java Swing recreation of Flappy Bird with custom-rendered bird, pipes, and scrolling background. Swing Timer game loop with KeyListener input, real-time collision detection, live score tracking, and instant restart.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+          <div class="plinks"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="over">// Track Record</div>
+      <h2>Experience</h2>
+      <p>Organizations and teams I've been fortunate to work with</p>
+      <div class="rule"></div>
+    </div>
+    <div class="exp-list">
+      <article class="exp-card">
+        <div>
+          <div class="exp-role">STEM Learning Facilitator</div>
+          <div class="exp-org">University of Texas at Arlington</div>
+          <p class="exp-desc">Led weekly Pre-Calculus sessions for 16–20 students; boosted scores by 10–15%. Created 30+ lesson plans and problem sets for 50+ students overall. Used data to improve instruction and coordinated with faculty to streamline resources.</p>
+        </div>
+        <div class="exp-meta">May 2024 – Present<br/>Arlington, TX</div>
+      </article>
+      <article class="exp-card">
+        <div>
+          <div class="exp-role">Project Development Manager</div>
+          <div class="exp-org">SCAI at UTA</div>
+          <p class="exp-desc">Directed project pipeline: idea intake, documentation, progress tracking. Defined deadlines and milestones, monitored status, facilitated delivery, and coordinated members to keep participation steady.</p>
+        </div>
+        <div class="exp-meta">June 2025 – Present<br/>Arlington, TX</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section" style="border-bottom:none">
+  <div class="container">
+    <div class="sec-head">
+      <div class="over">// Transmission</div>
+      <h2>Get In Touch</h2>
+      <p>Have a question or want to work together?</p>
+      <div class="rule"></div>
+    </div>
+    <div class="contact-wrap">
+      <div>
+        <p class="contact-lead">I'm always open to discussing new projects, internship opportunities, or just chatting about tech. Drop me a line!</p>
+        <div class="contact-email"><span>▸</span>bidhankhadka437@gmail.com</div>
+      </div>
+      <form onsubmit="return false">
+        <div class="row"><input placeholder="Your name" /><input placeholder="Your email" /></div>
+        <input placeholder="Subject" />
+        <textarea rows="4" placeholder="Your message"></textarea>
+        <button class="send-btn">Transmit ▸▸</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 <b>Bidhan Khadka</b> · Built with React</footer>
+
+</body>
+</html>

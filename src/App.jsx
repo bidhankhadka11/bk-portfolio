@@ -13,11 +13,15 @@ const { profile, projects, experience } = resume
 
 export default function App() {
   return (
-    <div className="page-frame">
+    <>
       <Nav />
       <Hero profile={profile} />
 
-      <Section id="projects" title="Projects" subtitle="A collection of projects where I experimented, learned, and delivered" className="projects">
+      <Section
+        id="projects"
+        command="ls -la ./projects/"
+        note={`${projects.length} directories found — where I experimented, learned, and delivered`}
+      >
         <div className="grid">
           {projects.map((p) => (
             <ProjectCard key={p.name} {...p} />
@@ -25,33 +29,22 @@ export default function App() {
         </div>
       </Section>
 
-      <Section id="experience" title="Experience" subtitle="Organizations and teams I’ve been fortunate to work with" className="exp">
-        <div className="exp-list">
-          {experience.map((e) => (
+      <Section id="experience" command={`cat experience.log | tail -n ${experience.length}`}>
+        <div className="log">
+          {/* newest first, like a real log tail */}
+          {[...experience].reverse().map((e) => (
             <ExperienceCard key={`${e.role}-${e.org}`} {...e} />
           ))}
         </div>
       </Section>
 
-
-      {/* <Section id="education" title="Education">
-        {education.map((ed, i) => (
-          <article key={i} className="card" style={{ marginBottom: 12 }}>
-            <strong>{ed.school}</strong> — {ed.degree}{' '}
-            <span style={{ color: 'var(--muted)' }}>• {ed.dates}</span>
-            <div style={{ marginTop: 8 }}>
-              {ed.notes.map((n) => (
-                <span className="tag" key={n}>
-                  {n}
-                </span>
-              ))}
-            </div>
-          </article>
-        ))}
-      </Section> */}
-
       <Contact email={profile.email} links={profile.links} />
 
-    </div>
+      <footer>
+        <div className="container">
+          <span className="u">bidhan@uta</span>:~$ echo "© 2026 Bidhan Khadka · exit 0"<span className="blink">▊</span>
+        </div>
+      </footer>
+    </>
   )
 }

@@ -1,18 +1,14 @@
 /*
-  This stylesheet was split into per-section partials under ./styles/.
-  They are imported below in the SAME order they appeared in the original
-  single index.css — the cascade (and therefore the rendered result) is
-  identical, so nothing changes visually. Edit the individual files, not
-  this manifest. @import order matters; do not reorder these lines.
+  Terminal V2 theme — per-section partials under ./styles/.
+  Imported in cascade order; responsive.css must stay last.
+  Edit the individual files, not this manifest.
 */
-@import './styles/base.css';         /* tokens, reset, page frame, section base */
-@import './styles/navbar.css';       /* top nav + hamburger */
-@import './styles/hero.css';         /* hero, waves, typewriter, section headings */
-@import './styles/buttons.css';      /* shared .btn + .grid */
-@import './styles/hero-extras.css';  /* languages, social links, tech marquee */
-@import './styles/projects.css';     /* shared .card + projects grid/cards */
-@import './styles/experience.css';   /* experience rows */
-@import './styles/skills.css';       /* skills grid + tags */
-@import './styles/contact.css';      /* contact info + form + gradient btn */
-@import './styles/footer.css';       /* site footer */
+@import './styles/base.css';         /* tokens, reset, CRT overlays, section scaffolding */
+@import './styles/navbar.css';       /* terminal window chrome nav + hamburger */
+@import './styles/hero.css';         /* whoami hero + phosphor portrait */
+@import './styles/buttons.css';      /* shared .btn */
+@import './styles/projects.css';     /* file-window project cards */
+@import './styles/experience.css';   /* experience log */
+@import './styles/contact.css';      /* contact prompt form */
+@import './styles/footer.css';       /* shutdown echo footer */
 @import './styles/responsive.css';   /* all breakpoint overrides (must stay last) */

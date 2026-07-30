@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup 3 — Midnight Gradient (blue-tinted, gradient-forward)</title>
+<style>
+  :root {
+    --page-bg: #07090f;
+    --bg: #0b0e16;
+    --card: #10131d;
+    --card-alt: #141827;
+    --text: #dde1ea;
+    --muted: #96a0b5;
+    --accent: #ffc04c;
+    --border: rgba(255, 255, 255, 0.09);
+    --frame-line: rgba(255, 255, 255, 0.13);
+    --frame-margin: max(40px, (100vw - 1400px) / 2);
+    --frame-inset: max(41px, (100vw - 1400px) / 2 + 1px);
+    --grad: linear-gradient(90deg, #ffc04c, #ff8a3c, #ff5f8f, #a855f7, #4cb8ff, #ffc04c);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; background: var(--page-bg); }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page-bg); color: var(--text); line-height: 1.5;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .page-frame {
+    margin: 0 var(--frame-margin);
+    border-left: 1px solid var(--frame-line);
+    border-right: 1px solid var(--frame-line);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+  @keyframes gradient-shift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+  .grad-text {
+    background: var(--grad); background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  /* Nav — with gradient top line */
+  .nav { position: fixed; top: 0; left: var(--frame-inset); right: var(--frame-inset); z-index: 100; height: 64px; }
+  .nav .menu {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(9, 11, 18, 0.82); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border); padding: 0 40px; height: 64px; position: relative;
+  }
+  .nav .menu::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--grad); background-size: 300% 100%; animation: gradient-shift 8s ease infinite;
+  }
+  .nav .brand { font-weight: 800; font-size: 15px; letter-spacing: -0.3px; }
+  .nav .links { display: flex; gap: 2px; }
+  .nav .links a { color: var(--muted); font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 8px; transition: all .12s; }
+  .nav .links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  /* Hero */
+  .hero {
+    margin-top: 64px; min-height: calc(100vh - 64px);
+    display: flex; flex-direction: column;
+    border-bottom: 1px solid var(--border); position: relative; padding-top: 40px;
+  }
+  /* dotted grid backdrop */
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 70% 40%, #000 0%, transparent 70%);
+    mask-image: radial-gradient(ellipse 75% 70% at 70% 40%, #000 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero .container {
+    flex: 1; display: flex; justify-content: space-between; align-items: center;
+    gap: 24px; width: 100%; padding-top: 24px; padding-bottom: 24px; position: relative;
+  }
+  .hero h1 { font-size: 84px; line-height: 1.03; font-weight: 800; letter-spacing: -2.5px; margin-bottom: 20px; max-width: 760px; }
+  .hero p { color: var(--muted); font-size: 17px; font-weight: 500; max-width: 560px; margin-bottom: 30px; line-height: 1.65; }
+  .hl { color: var(--accent); font-weight: 700; }
+  .caret { font-weight: 400; animation: blink 1s steps(1) infinite; color: var(--accent); }
+  @keyframes blink { 50% { opacity: 0; } }
+  .cta-row { display: flex; gap: 12px; }
+  .btn {
+    display: inline-block; color: #000; font-weight: 700; font-size: 14px;
+    padding: 11px 22px; border: none; cursor: pointer; border-radius: 10px;
+    background: var(--grad); background-size: 300% 100%;
+    animation: gradient-shift 8s ease infinite; transition: all .15s;
+  }
+  .btn:hover { box-shadow: 0 0 24px rgba(255, 138, 60, 0.35); }
+  .btn.secondary {
+    background: rgba(255,255,255,0.04); color: var(--text);
+    border: 1px solid rgba(255,255,255,0.14); animation: none;
+  }
+  .btn.secondary:hover { background: rgba(255,255,255,0.08); box-shadow: none; }
+  .social-row { display: flex; gap: 28px; margin-top: 42px; }
+  .social-row a { color: var(--muted); font-size: 14px; font-weight: 600; transition: all .15s; }
+  .social-row a:hover { color: var(--accent); transform: translateY(-2px); }
+
+  .hero-figure { flex-shrink: 0; max-width: 40%; align-self: flex-end; margin-bottom: -24px; position: relative; }
+  .hero-figure::before {
+    content: ""; position: absolute; inset: 10% -10% 0;
+    background: radial-gradient(circle at 50% 60%, rgba(168,85,247,0.16), rgba(76,184,255,0.1), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-img { position: relative; height: clamp(320px, 65vh, 520px); width: auto; display: block; }
+  @media (max-width: 1199px) { .hero-figure { display: none; } .hero h1 { font-size: 56px; } }
+
+  /* Tech marquee strip (CSS-only scroll) */
+  .hero-divider { border-top: 1px solid var(--frame-line); }
+  .tech-marquee {
+    overflow: hidden; padding: 24px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .tech-track { display: flex; gap: 48px; width: max-content; animation: marquee 30s linear infinite; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .tech-track span { color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
+  .tech-track span:hover { color: var(--accent); }
+
+  /* Sections */
+  .section { padding: 88px 0; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .section.alt { background: var(--page-bg); }
+  .section-head h2 { font-size: 40px; font-weight: 800; letter-spacing: -1px; color: #fff; margin-bottom: 8px; display: inline-block; }
+  .section-head .rule { width: 64px; height: 3px; background: var(--grad); background-size: 300% 100%; animation: gradient-shift 8s ease infinite; border-radius: 2px; margin: 14px 0 10px; }
+  .section-head p { color: var(--muted); font-size: 16px; margin-bottom: 36px; }
+
+  /* Projects — gradient-edged cards, always-on subtle gradient border */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .project-card {
+    position: relative; background: var(--card); border-radius: 14px; overflow: hidden;
+    display: flex; flex-direction: column; transition: background .15s, transform .2s;
+  }
+  .project-card::after {
+    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    border: 1px solid transparent; border-radius: 14px;
+    background: var(--grad) border-box; background-size: 300% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0.35; transition: opacity .2s;
+    animation: gradient-shift 8s ease infinite;
+  }
+  .project-card:hover { background: var(--card-alt); transform: translateY(-3px); }
+  .project-card:hover::after { opacity: 1; }
+  .project-media { height: 270px; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .project-media img { width: 100%; height: 100%; object-fit: cover; object-position: top left; transition: transform .4s ease; display: block; }
+  .project-card:hover .project-media img { transform: scale(1.07); }
+  .project-body { padding: 24px 26px 22px; flex: 1; display: flex; flex-direction: column; }
+  .project-body h3 { font-size: 17px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 6px; }
+  .project-card:hover h3 { color: var(--accent); }
+  .project-body p { color: var(--muted); font-size: 13px; line-height: 1.6; flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+  .tag {
+    font-size: 11px; font-weight: 500; color: var(--muted);
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    padding: 2px 9px; border-radius: 6px;
+  }
+  .links { margin-top: 12px; display: flex; gap: 8px; }
+  .links a {
+    color: var(--accent); font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 7px;
+    border: 1px solid rgba(255,192,76,0.28); background: rgba(255,192,76,0.06); transition: all .12s;
+  }
+  .links a:hover { background: rgba(255,192,76,0.13); }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+  /* Experience — left gradient spine */
+  .exp-list { display: flex; flex-direction: column; gap: 18px; }
+  .exp-card {
+    position: relative; display: flex; justify-content: space-between; gap: 32px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 30px 36px 30px 42px; overflow: hidden; transition: background .15s;
+  }
+  .exp-card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--grad); background-size: 100% 300%;
+    animation: gradient-shift 8s ease infinite;
+  }
+  .exp-card:hover { background: var(--card-alt); }
+  .exp-role { font-size: 19px; font-weight: 700; letter-spacing: -0.2px; }
+  .exp-org { color: var(--accent); font-size: 16px; font-weight: 600; margin-top: 4px; }
+  .exp-desc { color: var(--muted); font-size: 14.5px; line-height: 1.65; margin-top: 12px; max-width: 640px; }
+  .exp-meta { flex-shrink: 0; text-align: right; color: var(--muted); font-size: 13px; line-height: 2; }
+  @media (max-width: 768px) { .exp-card { flex-direction: column; gap: 12px; } .exp-meta { text-align: left; } }
+
+  /* Contact */
+  .contact-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; }
+  .contact-lead { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 360px; margin-bottom: 24px; }
+  .contact-email { color: var(--text); font-size: 15px; font-weight: 600; }
+  .contact-email span { color: var(--accent); margin-right: 8px; }
+  form { display: grid; gap: 12px; }
+  .row { display: flex; gap: 12px; }
+  .row > * { flex: 1; }
+  input, textarea {
+    background: rgba(255,255,255,0.03); color: var(--text);
+    border: 1px solid rgba(255,255,255,0.14); border-radius: 10px;
+    padding: 12px 14px; font-size: 14px; font-family: inherit; width: 100%;
+  }
+  input:focus, textarea:focus { outline: none; border-color: rgba(255,192,76,0.5); box-shadow: 0 0 0 3px rgba(255,192,76,0.08); }
+  textarea { resize: vertical; }
+  .gradient-btn {
+    color: #000; font-weight: 700; font-size: 14px; padding: 13px; border: none; border-radius: 10px; cursor: pointer;
+    background: var(--grad); background-size: 300% 100%; animation: gradient-shift 8s ease infinite;
+  }
+  .gradient-btn:hover { box-shadow: 0 0 24px rgba(255, 138, 60, 0.3); }
+  @media (max-width: 800px) { .contact-grid { grid-template-columns: 1fr; gap: 36px; } }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 36px 0; background: var(--bg); }
+</style>
+</head>
+<body>
+<div class="page-frame">
+
+<nav class="nav">
+  <div class="menu">
+    <span class="brand grad-text">&lt;Bidhan/&gt;</span>
+    <div class="links">
+      <a href="#home">Home</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header id="home" class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <h1>Hi, I’m <span class="grad-text">&lt;Bidhan&gt;</span><span class="caret">|</span></h1>
+      <p>I am a <span class="hl">Computer Science student</span> at University of Texas at Arlington with a passion for <span class="hl">Machine Learning</span> and <span class="hl">Software Development</span>. I like building web applications and learning new technologies.</p>
+      <div class="cta-row">
+        <a class="btn" href="#projects">See Projects</a>
+        <a class="btn secondary" href="#contact">Contact Me</a>
+      </div>
+      <div class="social-row">
+        <a href="#">GitHub</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+    <figure class="hero-figure">
+      <img class="hero-img" src="../public/assets/Headshot_half_body.png" alt="Bidhan Khadka" />
+    </figure>
+  </div>
+  <div class="hero-divider"></div>
+  <div class="tech-marquee">
+    <div class="tech-track">
+      <span>PYTHON</span><span>JAVA</span><span>JAVASCRIPT</span><span>C++</span><span>HTML5</span><span>CSS</span><span>REACT</span><span>NODE.JS</span><span>FLASK</span><span>SPRING BOOT</span><span>MONGODB</span><span>TAILWIND</span><span>MYSQL</span><span>GIT</span><span>DOCKER</span><span>GCP</span><span>POSTMAN</span><span>NUMPY</span><span>PANDAS</span>
+      <span>PYTHON</span><span>JAVA</span><span>JAVASCRIPT</span><span>C++</span><span>HTML5</span><span>CSS</span><span>REACT</span><span>NODE.JS</span><span>FLASK</span><span>SPRING BOOT</span><span>MONGODB</span><span>TAILWIND</span><span>MYSQL</span><span>GIT</span><span>DOCKER</span><span>GCP</span><span>POSTMAN</span><span>NUMPY</span><span>PANDAS</span>
+    </div>
+  </div>
+</header>
+
+<section id="projects" class="section alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>Projects</h2>
+      <div class="rule"></div>
+      <p>A collection of projects where I experimented, learned, and delivered</p>
+    </div>
+    <div class="grid">
+      <article class="project-card">
+        <div class="project-media"><img src="../public/assets/rarify.png" alt="Rarify" /></div>
+        <div class="project-body">
+          <h3>Rarify</h3>
+          <p>A native Android marketplace for buying and selling rare collectibles, where a single account switches between buyer, seller, and admin roles. Built with Jetpack Compose and Material 3, with admin moderation tools and light/dark themes persisted via DataStore.</p>
+          <div class="tags"><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span><span class="tag">Material 3</span><span class="tag">SQLite</span><span class="tag">DataStore</span></div>
+          <div class="links"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-media"><img src="../public/assets/binaryclassification.png" alt="Software Defect Classifier" /></div>
+        <div class="project-body">
+          <h3>Software Defect Classifier (Kaggle)</h3>
+          <p>A Kaggle binary-classification project that predicts whether a C code module contains a software defect from its complexity metrics. Uses a class-balanced Random Forest with RobustScaler preprocessing, reaching ~0.79 ROC-AUC on the validation split.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">Random Forest</span><span class="tag">pandas</span></div>
+          <div class="links"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-media"><img src="../public/assets/fitjournal.png" alt="FitJournal" /></div>
+        <div class="project-body">
+          <h3>FitJournal</h3>
+          <p>A full-stack MERN fitness tracker for logging workouts by exercise name, reps, and weight. Implements complete CRUD over a REST API with global state managed through React Context and Hooks. Backed by MongoDB and Mongoose behind a clean, responsive UI.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">Express</span><span class="tag">MongoDB</span><span class="tag">Context API</span></div>
+          <div class="links"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-media"><img src="../public/assets/persona.png" alt="PersonaAI" /></div>
+        <div class="project-body">
+          <h3>PersonaAI</h3>
+          <p>A conversational AI chatbot powered by Google's Gemini API with selectable personalities like Neko, Shadow, and Sloth. Built on a client–server architecture where a React frontend talks to an Express backend. Delivers real-time replies with full conversation history.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">Express</span><span class="tag">Gemini API</span><span class="tag">CSS</span></div>
+          <div class="links"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-media"><img src="../public/assets/genetic.png" alt="Genetic Algorithm" /></div>
+        <div class="project-body">
+          <h3>Genetic Algorithm (Target String)</h3>
+          <p>A Java genetic algorithm that evolves a population of random character strings toward a target phrase. Implements elitist selection, single-point crossover, and rate-based mutation across successive generations with a clean object-oriented design.</p>
+          <div class="tags"><span class="tag">Java</span></div>
+          <div class="links"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-media"><img src="../public/assets/flappy.png" alt="Event-Driven Game" /></div>
+        <div class="project-body">
+          <h3>Event-Driven Game</h3>
+          <p>A Java Swing recreation of Flappy Bird with custom-rendered bird, pipes, and scrolling background. Drives continuous gameplay with a Swing Timer loop and KeyListener input, real-time collision detection, live score tracking, and instant restart.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+          <div class="links"><a href="#">GitHub</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Experience</h2>
+      <div class="rule"></div>
+      <p>Organizations and teams I’ve been fortunate to work with</p>
+    </div>
+    <div class="exp-list">
+      <article class="exp-card">
+        <div>
+          <div class="exp-role">STEM Learning Facilitator</div>
+          <div class="exp-org">University of Texas at Arlington</div>
+          <p class="exp-desc">Led weekly Pre-Calculus sessions for 16–20 students; boosted scores by 10–15%. Created 30+ lesson plans and problem sets for 50+ students overall. Used data to improve instruction and coordinated with faculty to streamline resources.</p>
+        </div>
+        <div class="exp-meta">May 2024 – Present<br/>Arlington, TX</div>
+      </article>
+      <article class="exp-card">
+        <div>
+          <div class="exp-role">Project Development Manager</div>
+          <div class="exp-org">SCAI at UTA</div>
+          <p class="exp-desc">Directed project pipeline: idea intake, documentation, progress tracking. Defined deadlines and milestones, monitored status, facilitated delivery, and coordinated members to keep participation steady.</p>
+        </div>
+        <div class="exp-meta">June 2025 – Present<br/>Arlington, TX</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>Get in touch</h2>
+      <div class="rule"></div>
+      <p>Have a question or want to work together?</p>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-lead">I’m always open to discussing new projects, internship opportunities, or just chatting about tech. Drop me a line!</p>
+        <div class="contact-email"><span>✉</span>bidhankhadka437@gmail.com</div>
+      </div>
+      <form onsubmit="return false">
+        <div class="row"><input placeholder="Your name" /><input placeholder="Your email" /></div>
+        <input placeholder="Subject" />
+        <textarea rows="5" placeholder="Your message"></textarea>
+        <button class="gradient-btn">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Bidhan Khadka · Built with React</footer>
+
+</div>
+</body>
+</html>

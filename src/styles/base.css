@@ -1,38 +1,19 @@
 /*
-  Design tokens extracted directly from aihero.dev CSS variables.
-  --background:       lab(3.04863% 0 0)     ≈ #0a0a0a
-  --page-background:  lab(.903296% 0 0)     ≈ #030303
-  --card:             lab(7.22637% 0 0)     ≈ #111111
-  --foreground:       lab(88.4% 0 0)        ≈ #dadada
-  --muted-foreground: lab(72.7632% 0 0)     ≈ #a3a3a3
-  --primary:          lab(82.64% 15.88 66.41) ≈ #ffc04c  (warm amber/gold)
-  --border:           lab(13% 0 0)          ≈ #1f1f1f
-  --input:            lab(18.8% 0 0)        ≈ #282828
-  --radius:           0.3rem                ≈ 4.8px
+  Terminal V2 theme — CRT green-phosphor terminal.
+  Tokens, reset, CRT screen overlays, and shared section scaffolding.
 */
 
 :root {
-  --bg: #0a0a0a;
-  --page-bg: #030303;
-  --card: #111111;
-  --card-alt: #161616;
-  --text: #dadada;
-  --muted: #a3a3a3;
-  --muted-bg: #141414;
-  --accent: #ffc04c;
-  --border: #1f1f1f;
-  --input-bg: #282828;
-  --radius-sm: 0.3rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  /* Distance from the browser edge to the vertical border lines.
-     Normally 40px, but on wide screens it grows so the bordered page caps at
-     ~1400px wide and stays centered. Nav uses the same var, so it stays in sync.
-     Change 1400px to make the page wider/narrower. */
-  --frame-margin: max(40px, (100vw - 1400px) / 2);
-  /* --frame-margin + 1px, pre-computed so the nav can use a plain var() (avoids
-     calc(var() + 1px) wrapping a max(), which breaks the CSS minifier). */
-  --frame-inset: max(41px, (100vw - 1400px) / 2 + 1px);
+  --bg: #050805;
+  --panel: #0a120c;
+  --panel-2: #0d1810;
+  --green: #4af26c;
+  --green-dim: #2c9648;
+  --green-faint: rgba(74, 242, 108, 0.14);
+  --amber: #ffc04c;
+  --text: #b8e6c4;
+  --muted: #6f9b7c;
+  --border: rgba(74, 242, 108, 0.28);
 }
 
 * {
@@ -41,28 +22,16 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--page-bg);
-}
-
-/*
-  Layout-based frame: all content (including sections and their border-bottoms)
-  lives inside this box, so horizontal borders naturally stop at the vertical ones.
-  The nav (position:fixed) is kept in sync via the same --frame-margin variable.
-*/
-.page-frame {
-  margin: 0 var(--frame-margin);
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
-  min-height: 100vh;
-  overflow-x: hidden;
+  background: var(--bg);
 }
 
 body {
   margin: 0;
-  font-family: "Geist", Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  background: var(--page-bg);
+  font-family: "SF Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", Consolas, monospace;
+  background: var(--bg);
   color: var(--text);
-  line-height: 1.5;
+  line-height: 1.6;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -72,20 +41,110 @@ a {
   text-decoration: none;
 }
 
+::selection {
+  background: var(--green);
+  color: #000;
+}
+
+/* CRT overlay: scanlines + vignette + occasional flicker */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 10, 2, 0.55) 100%);
+  animation: flicker 4s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.86; }
+  94% { opacity: 1; }
+  97% { opacity: 0.93; }
+}
+
+/* Phosphor-glow text helper */
+.glow {
+  color: var(--green);
+  text-shadow: 0 0 8px rgba(74, 242, 108, 0.55);
+}
+
+/* Amber highlight for key phrases */
+.hl {
+  color: var(--amber);
+}
+
 .container {
-  max-width: 1120px;
+  max-width: 1060px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
 .section {
-  padding: 80px 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  padding: 72px 0;
+  border-bottom: 1px dashed var(--border);
 }
 
-/* Alternating section backgrounds using explicit class names */
-.section.skills,
-.section.projects {
-  background: var(--page-bg);
+/* Section header: fake shell prompt + comment note */
+.sec-cmd {
+  color: var(--muted);
+  margin-bottom: 26px;
+}
+
+.sec-cmd .u { color: var(--green); }
+.sec-cmd .h { color: var(--amber); }
+.sec-cmd .cmd { color: var(--text); }
+
+.sec-note {
+  color: var(--muted);
+  font-size: 13px;
+  margin: -18px 0 26px;
+}
+
+.sec-note::before {
+  content: "# ";
+  color: var(--green-dim);
+}
+
+/* Traffic-light window dots (nav + project card bars) */
+.dots {
+  display: flex;
+  gap: 7px;
+}
+
+.dots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.dots i:nth-child(1) { background: #ff5f56; }
+.dots i:nth-child(2) { background: #ffbd2e; }
+.dots i:nth-child(3) { background: #27c93f; }
+
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after,
+  .blink,
+  .cursor {
+    animation: none !important;
+  }
 }
